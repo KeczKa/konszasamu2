@@ -1,0 +1,102 @@
+# Kubernetes manifests for the Konsza Samu school site (namespace: dev).
+# Prereqs: a MongoDB reachable from the cluster (in-cluster mongo or Atlas),
+# a Secret named konsza-secrets with MONGO_URL, DB_NAME, JWT_SECRET,
+# ADMIN_EMAIL, ADMIN_PASSWORD, CORS_ORIGINS, and an imagePullSecret named
+# gitlab-registry for registry.gitlab.com.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: backend }
+  template:
+    metadata:
+      labels: { app: backend }
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry
+      containers:
+        - name: backend
+          image: registry.gitlab.com/konszasamu/webpage/backend:latest
+          ports:
+            - containerPort: 8001
+          envFrom:
+            - secretRef: { name: konsza-secrets }
+          env:
+            - name: PHOTO_STORAGE_DIR
+              value: /app/uploads
+          volumeMounts:
+            - name: gallery-storage
+              mountPath: /app/uploads
+      volumes:
+        - name: gallery-storage
+          persistentVolumeClaim:
+            claimName: konsza-photos-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: dev
+spec:
+  selector: { app: backend }
+  ports:
+    - port: 8001
+      targetPort: 8001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: frontend }
+  template:
+    metadata:
+      labels: { app: frontend }
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry
+      containers:
+        - name: frontend
+          image: registry.gitlab.com/konszasamu/webpage/frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: dev
+spec:
+  selector: { app: frontend }
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: konszasamu
+  namespace: dev
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 12m
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: dev.konszasamu.ro
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

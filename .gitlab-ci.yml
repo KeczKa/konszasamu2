@@ -1,0 +1,55 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_HOST: "unix:///var/run/docker.sock"
+  DOCKER_BUILDKIT: "1"
+  BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA
+  FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA
+
+build-backend:
+  stage: build
+  image: docker:27-cli
+  tags:
+    - suliweb
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - docker buildx create --name ci-builder --driver docker-container --use
+    - docker buildx inspect --bootstrap
+    - docker buildx build --platform linux/amd64 --tag "$BACKEND_IMAGE" --push ./backend
+
+build-frontend:
+  stage: build
+  image: docker:27-cli
+  tags:
+    - suliweb
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - docker buildx create --name ci-builder --driver docker-container --use
+    - docker buildx inspect --bootstrap
+    - docker buildx build --platform linux/amd64 --tag "$FRONTEND_IMAGE" --push ./frontend
+
+deploy-k8s:
+  stage: deploy
+  image: alpine:3.22
+  tags:
+    - suliweb
+  before_script:
+    - apk add --no-cache curl
+    - curl -LO "https://dl.k8s.io/release/v1.35.4/bin/linux/amd64/kubectl"
+    - install -m 0755 kubectl /usr/local/bin/kubectl
+  script:
+    - test -n "$KUBECONFIG" || (echo "KUBECONFIG is not configured" && exit 1)
+    - test -f "$KUBECONFIG" || (echo "KUBECONFIG is not a file" && exit 1)
+    - kubectl config current-context
+    - kubectl get --raw=/version
+    - kubectl auth can-i create deployments -n dev
+    - kubectl apply -f deploy/k8s.yaml
+    - kubectl set image deployment/backend backend="$BACKEND_IMAGE" -n dev
+    - kubectl set image deployment/frontend frontend="$FRONTEND_IMAGE" -n dev
+    - kubectl rollout status deployment/backend -n dev --timeout=180s
+    - kubectl rollout status deployment/frontend -n dev --timeout=180s
+    - kubectl get pods,services,ingress -n dev
+  only:
+    - dev

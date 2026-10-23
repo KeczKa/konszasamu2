@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+bcrypt
+PyJWT
+python-dotenv
+pydantic[email]
+pymongo
+motor>=3.6,<4.0
+httpx
+requests
+python-multipart

@@ -1,0 +1,377 @@
+{
+  "theme": "light",
+  "archetype": "ARCHETYPE 1: ORGANIC & EARTHY (Transylvanian Heritage meets Modern Editorial)",
+  "colors": {
+    "surfaces": [
+      {
+        "name": "page",
+        "kind": "solid",
+        "bg": "#FAF7F2",
+        "on_bg": "#1C1917",
+        "on_bg_muted": "#57534E",
+        "roles": {
+          "link": "#9A3412",
+          "error": "#B91C1C",
+          "success": "#15803D"
+        }
+      },
+      {
+        "name": "panel",
+        "kind": "solid",
+        "bg": "#F5EFE6",
+        "on_bg": "#1C1917",
+        "on_bg_muted": "#57534E",
+        "roles": {
+          "link": "#9A3412",
+          "error": "#B91C1C",
+          "success": "#15803D"
+        }
+      },
+      {
+        "name": "card",
+        "kind": "solid",
+        "bg": "#FFFFFF",
+        "on_bg": "#1C1917",
+        "on_bg_muted": "#57534E",
+        "roles": {
+          "link": "#9A3412",
+          "border": "#E7DFD5"
+        }
+      },
+      {
+        "name": "inverse",
+        "kind": "solid",
+        "bg": "#1C1917",
+        "on_bg": "#FAF7F2",
+        "on_bg_muted": "#D6D3D1",
+        "roles": {
+          "link": "#FDBA74",
+          "error": "#FCA5A5",
+          "success": "#86EFAC"
+        }
+      },
+      {
+        "name": "terracotta_accent_panel",
+        "kind": "solid",
+        "bg": "#9A3412",
+        "on_bg": "#FFF7ED",
+        "on_bg_muted": "#FFEDD5",
+        "roles": {
+          "link": "#FFFFFF"
+        }
+      },
+      {
+        "name": "forest_accent_panel",
+        "kind": "solid",
+        "bg": "#1E3A2F",
+        "on_bg": "#F0FDF4",
+        "on_bg_muted": "#BBF7D0",
+        "roles": {
+          "link": "#FEF08A"
+        }
+      },
+      {
+        "name": "hero",
+        "kind": "image",
+        "contrast_against": "#1C1917",
+        "guarantee": "scrim: linear-gradient(to right, rgba(28,25,23,0.85) 0%, rgba(28,25,23,0.60) 60%, rgba(28,25,23,0.35) 100%)",
+        "on_bg": "#FAF7F2",
+        "on_bg_muted": "#E7E5E4",
+        "roles": {
+          "link": "#FDBA74",
+          "error": "#FCA5A5",
+          "success": "#86EFAC"
+        }
+      },
+      {
+        "name": "glass_header",
+        "kind": "glass",
+        "contrast_against": "#FAF7F2",
+        "guarantee": "backdrop-blur-xl bg-[#FAF7F2]/85 border-b border-[#E7DFD5]/80",
+        "on_bg": "#1C1917",
+        "on_bg_muted": "#57534E",
+        "roles": {
+          "link": "#9A3412"
+        }
+      }
+    ],
+    "accent": "#9A3412",
+    "on_accent": "#FFFFFF",
+    "secondary_accent": "#1E3A2F",
+    "on_secondary_accent": "#FFFFFF",
+    "border_subtle": "#E7DFD5",
+    "border_strong": "#1C1917"
+  },
+  "typography": {
+    "font_heading": "'Lora Variable', serif",
+    "font_sans": "'DM Sans Variable', sans-serif",
+    "font_mono": "'JetBrains Mono Variable', monospace",
+    "scale_px": {
+      "display": 60,
+      "h1": 48,
+      "h2": 36,
+      "h3": 24,
+      "body": 16,
+      "caption": 14
+    },
+    "rules": {
+      "h1": "font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.08] text-stone-900",
+      "h2": "font-serif text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-tight text-stone-900",
+      "h3": "font-serif text-xl sm:text-2xl font-medium tracking-tight text-stone-900",
+      "h4": "font-sans font-semibold text-lg sm:text-xl text-stone-900",
+      "body": "font-sans text-base leading-relaxed text-stone-700",
+      "caption": "font-sans text-sm text-stone-600",
+      "overline": "font-mono uppercase text-xs tracking-[0.2em] font-semibold text-amber-800"
+    }
+  },
+  "entry_surfaces": {
+    "/": "split hero — editorial typography + live stats + RO/HU switch left, framed landscape & classroom imagery right",
+    "/news": "editorial journal grid — featured story banner top, multi-column bilingual articles list with filter tabs",
+    "/news/:id": "curated editorial layout — header with author, date, bilingual audio/print tags, rich typography article body, related school chronicles",
+    "/about": "heritage chronicle — school timeline from foundation to present, Konsza Samu legacy tribute, faculty grid, architecture gallery",
+    "/contact": "warm split communication panel — school visiting hours & Covasna County address left, reactive inquiry form right",
+    "/admin/login": "branded split login — Nagybacon school heritage crest & quote left, secure faculty auth form right",
+    "/admin": "dense management console — article publisher (RO/HU dual edit), inquiry ledger table, quick school announcement broadcast"
+  },
+  "visual_enhancers": {
+    "texture": "subtle paper grain svg background overlay (0.02 opacity) to eliminate digital sterility",
+    "border_style": "1px solid #E7DFD5 with warm rounded corners (rounded-2xl) and occasional sharp technical accents",
+    "shadows": "layered soft ambient: shadow-[0_4px_24px_-2px_rgba(28,25,23,0.06),0_12px_48px_-4px_rgba(28,25,23,0.08)]",
+    "school_crest_svg": "Crafted geometric monogram SVG with 'KS' (Konsza Samu) + Székely Sun & Star + Open Book symbol for favicon and headers",
+    "marquee": "editorial slow ribbon with bilingual school virtues and motto ('Tudás • Közösség • Hagyomány / Cunoaștere • Comunitate • Tradiție')"
+  },
+  "media": {
+    "image_urls": {
+      "hero_landscape": {
+        "url": "https://images.unsplash.com/photo-1787165838268-7647ebf7000a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwyfHx0cmFuc3lsdmFuaWElMjBydXJhbCUyMGFyY2hpdGVjdHVyZSUyMHZpbGxhZ2UlMjBoaWxscyUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3OTE1MzQ0MjR8MA&ixlib=rb-4.1.0&q=85",
+        "category": "hero_and_about",
+        "description": "Historic Transylvanian valley architecture and green hills evoking Bățanii Mari (Nagybacon) countryside"
+      },
+      "classroom_learning": {
+        "url": "https://images.unsplash.com/photo-1577896851231-70ef18881754?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHNjaG9vbCUyMGNsYXNzcm9vbSUyMGxlYXJuaW5nfGVufDB8fHx8MTc5MTUzNDQyNHww&ixlib=rb-4.1.0&q=85",
+        "category": "classroom_and_teachers",
+        "description": "Engaging classroom instruction with teacher and active elementary students"
+      },
+      "student_study": {
+        "url": "https://images.unsplash.com/photo-1598981457915-aea220950616?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxzdHVkZW50cyUyMHNjaG9vbCUyMGNsYXNzcm9vbSUyMGxlYXJuaW5nfGVufDB8fHx8MTc5MTUzNDQyNHww&ixlib=rb-4.1.0&q=85",
+        "category": "news_and_features",
+        "description": "Dedicated student writing notes at a wooden school desk"
+      },
+      "village_panoramic": {
+        "url": "https://images.unsplash.com/photo-1754837013193-589811c98f46?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHw0fHx0cmFuc3lsdmFuaWElMjBydXJhbCUyMGFyY2hpdGVjdHVyZSUyMHZpbGxhZ2UlMjBoaWxscyUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3OTE1MzQ0MjR8MA&ixlib=rb-4.1.0&q=85",
+        "category": "community_and_history",
+        "description": "Rolling hills and green pastures surrounding Transylvanian village communities"
+      },
+      "school_library": {
+        "url": "https://images.unsplash.com/photo-1508107536691-b1449928187d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjBsaWJyYXJ5JTIwYm9va3MlMjBoaXN0b3JpYyUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3OTE1MzQ0MjR8MA&ixlib=rb-4.1.0&q=85",
+        "category": "library_and_folklore",
+        "description": "Classic wooden library bookshelves holding historical books, journals, and folklore records"
+      }
+    }
+  },
+  "bilingual_system": {
+    "languages": ["ro", "hu"],
+    "default_language": "hu",
+    "language_names": {
+      "ro": "Română",
+      "hu": "Magyar"
+    },
+    "storage_key": "konsza_lang_pref",
+    "translations_matrix": {
+      "school_name": {
+        "ro": "Școala Gimnazială „Konsza Samu”",
+        "hu": "Konsza Samu Általános Iskola"
+      },
+      "school_location": {
+        "ro": "Bățanii Mari, Jud. Covasna",
+        "hu": "Nagybacon, Kovászna Megye"
+      },
+      "nav": {
+        "home": {"ro": "Acasă", "hu": "Főoldal"},
+        "about": {"ro": "Despre Școală", "hu": "Iskolánkról"},
+        "news": {"ro": "Noutăți & Evenimente", "hu": "Hírek & Események"},
+        "history": {"ro": "Istoric & Tradiție", "hu": "Történet & Hagyomány"},
+        "staff": {"ro": "Cadre Didactice", "hu": "Tanári Kar"},
+        "contact": {"ro": "Contact & Înscrieri", "hu": "Kapcsolat & Beiratkozás"},
+        "admin": {"ro": "Portal Cadre", "hu": "Tanári Portál"}
+      },
+      "hero_motto": {
+        "ro": "Educație cu rădăcini adânci și orizonturi deschise în inima Ținutului Secuiesc.",
+        "hu": "Mély gyökerekkel és nyitott látóhatárral a Székelyföld szívében."
+      }
+    }
+  },
+  "motion": {
+    "scroll": "Smooth momentum scrolling feel with Lenis or fine-tuned framer-motion inertia",
+    "hero_reveal": "Staggered masked line reveal for headlines (staggerChildren: 0.12, duration: 0.85, ease: [0.16, 1, 0.3, 1])",
+    "card_hover": "Subtle translation (-4px Y) and delicate warm shadow expansion with duration 0.3s ease-out",
+    "marquee_speed": "Continuous gentle scroll at 28px/s with pauseOnHover enabled",
+    "view_transition": "Opacity fade with gentle 12px Y-offset for route and tab transitions"
+  },
+  "accessibility": {
+    "contrast_check": "All text tokens exceed WCAG AA 4.5:1 ratio against their respective surface backgrounds (#FAF7F2, #F5EFE6, #1C1917, #9A3412)",
+    "keyboard_navigation": "Visible 2px focus ring with 2px offset (#9A3412 ring-offset-2)",
+    "screen_readers": "All language toggles indicate current active language with aria-pressed or aria-current, images have descriptive alt texts in the active language",
+    "reduced_motion": "Wrap animations with Framer Motion reduced-motion hooks or CSS @media (prefers-reduced-motion: reduce)"
+  },
+  "component_structure": {
+    "layout_components": [
+      {
+        "name": "HeaderNav",
+        "path": "frontend/src/components/HeaderNav.tsx",
+        "description": "Sticky Crystal Glass navigation with SVG crest monogram, desktop links, persistent RO/HU language switcher toggle, and 'Contact / Înscrieri' CTA"
+      },
+      {
+        "name": "FooterEditorial",
+        "path": "frontend/src/components/FooterEditorial.tsx",
+        "description": "Deep stone (#1C1917) footer with large 'KONSZA SAMU' watermark typography, bilingual contact details, school address, emergency notices, and admin portal link"
+      },
+      {
+        "name": "EditorialMarquee",
+        "path": "frontend/src/components/EditorialMarquee.tsx",
+        "description": "Slow, organic running ribbon displaying school values, motto, and folklore heritage in Hungarian and Romanian"
+      }
+    ],
+    "page_components": [
+      {
+        "name": "Home",
+        "path": "frontend/src/pages/Home.tsx",
+        "sections": [
+          "Hero: Split layout with animated headline, bilingual badge, school stats, hero image with warm scrim",
+          "Mission & Identity: 3-column bento card featuring Heritage, Community, and Academic Excellence",
+          "Latest News & Announcements: 3 recent articles with bilingual tags, publish date, and read time",
+          "School Life Showcase: Photo grid with students, activities, folklore dance, and library",
+          "Konsza Samu Memorial Quote & Tribute",
+          "Interactive Inquiry & Visiting Card"
+        ]
+      },
+      {
+        "name": "NewsList",
+        "path": "frontend/src/pages/NewsList.tsx",
+        "sections": [
+          "Editorial header with category filters (All, Academic, Cultural, Announcements, Competitions)",
+          "Featured top story with large image and summary",
+          "Grid of articles with search bar, pagination/load more, and bilingual switch support"
+        ]
+      },
+      {
+        "name": "NewsDetail",
+        "path": "frontend/src/pages/NewsDetail.tsx",
+        "sections": [
+          "Breadcrumb & category badge",
+          "Large title, author, date formatted in Romanian/Hungarian locale",
+          "Hero image & rich text body with quote callouts and image galleries",
+          "Share actions, back to news list, and next/prev article links"
+        ]
+      },
+      {
+        "name": "AboutHistory",
+        "path": "frontend/src/pages/AboutHistory.tsx",
+        "sections": [
+          "Konsza Samu biography: The renowned folklore collector and educator of Nagybacon",
+          "School History Timeline (from founding to present modern era)",
+          "Faculty & Staff Directory with roles and qualifications",
+          "School Facilities & Educational Programs (Classes I-VIII, kindergarten, afterschool)"
+        ]
+      },
+      {
+        "name": "Contact",
+        "path": "frontend/src/pages/Contact.tsx",
+        "sections": [
+          "School Location info: Bățanii Mari 527015, Județul Covasna",
+          "Direct contacts (Secretariat, Director, Email, Phone)",
+          "Interactive Contact/Enrollment Inquiry Form saving to MongoDB backend with toast feedback",
+          "Public Transport / Visiting instructions & Map representation"
+        ]
+      },
+      {
+        "name": "AdminLogin",
+        "path": "frontend/src/pages/AdminLogin.tsx",
+        "sections": [
+          "Branded login card with secure username & password credentials input",
+          "Session handling with FastAPI token/cookie auth and instant redirect to dashboard"
+        ]
+      },
+      {
+        "name": "AdminDashboard",
+        "path": "frontend/src/pages/AdminDashboard.tsx",
+        "sections": [
+          "Overview stats (Total posts, Enquiries received, Active announcements)",
+          "Articles Manager: Create new article with dual RO & HU fields, Edit, Delete, Image URL input",
+          "Inquiries Ledger: Table of received parent/visitor messages with mark as resolved/replied",
+          "Emergency Announcement banner controller for the homepage"
+        ]
+      }
+    ]
+  },
+  "backend_endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/news",
+      "description": "Returns list of articles with bilingual titles, contents, tags, dates, and cover images"
+    },
+    {
+      "method": "GET",
+      "path": "/api/news/{id}",
+      "description": "Returns detailed single article by ID or slug"
+    },
+    {
+      "method": "POST",
+      "path": "/api/news",
+      "description": "Creates a new article (Admin auth required, supports RO & HU fields)"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/news/{id}",
+      "description": "Updates an existing article (Admin auth required)"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/news/{id}",
+      "description": "Deletes an article (Admin auth required)"
+    },
+    {
+      "method": "POST",
+      "path": "/api/contact",
+      "description": "Saves a new parent/visitor contact inquiry to the database"
+    },
+    {
+      "method": "GET",
+      "path": "/api/contact",
+      "description": "Fetches all contact inquiries for the admin dashboard"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "description": "Authenticates teacher/admin user and sets session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "description": "Returns current logged in user details or 401"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "description": "Clears auth session"
+    }
+  ],
+  "instructions_to_main_agent": [
+    "1. Replace index.html title with 'Școala Gimnazială Konsza Samu • Nagybacon | Bățanii Mari'",
+    "2. In frontend/src/index.css, configure @import '@fontsource-variable/lora'; @import '@fontsource-variable/dm-sans'; and @import '@fontsource-variable/jetbrains-mono';",
+    "3. Set CSS variables for warm stone palette (#FAF7F2 base, #1C1917 text, #9A3412 terracotta accent, #1E3A2F forest secondary) as specified in surfaces.",
+    "4. Implement a bilingual language context provider with persisted state ('ro' / 'hu') and complete dictionary for all UI text, allowing smooth instant language toggling without full reload.",
+    "5. Seed the backend with at least 6 rich bilingual articles celebrating school events, folklore days, sports competitions, and academic milestones in Nagybacon/Bățanii Mari.",
+    "6. Build the full Admin CMS panel allowing the headmaster/teachers to write new posts in both Romanian and Hungarian, edit existing articles, and view contact submissions.",
+    "7. Include all testing attributes (data-testid='...') across navigation links, language switches, form inputs, submit buttons, and admin actions."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Avoid generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy and subtle paper grain textures.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) with warm tinting.",
+    "You MUST NOT apply universal transition (e.g. transition: all). Add specific transitions for transform and opacity.",
+    "Never use AI assistant emoji icons (🤖, 🧠, 💡). Use lucide-react glyphs or custom crafted SVGs.",
+    "Main agent relies on the provided curated Unsplash URLs for school and regional imagery."
+  ]
+}
