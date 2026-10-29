@@ -1,0 +1,17 @@
+{
+  "summary": "Frontend-only retest of the member-page news scoping bug fix: PASS. I created two TEST posts through the API with the admin cookie: one ajtai-iskola, one kisbaconi-ovoda. On /tagintezmenyek/ajtai-iskola, member-news showed exactly 3 posts (the TEST post plus the 2 seeded ajtai-iskola posts). kisbaconi-ovoda showed only its 1 TEST post. nagybaconi-ovoda showed member-no-news ('Ehhez a tagintézményhez még nincs hír.') and no cards. nagybaconi-iskola and kisbaconi-iskola each showed only their own 2 seeded posts. Client-side navigation through the header dropdown, starting from home and then /noutati, gave the correct list each time with no stale items. Route: ajtai-iskola -> kisbaconi-ovoda -> nagybaconi-ovoda -> kisbaconi-ovoda -> ajtai-iskola -> nagybaconi-iskola -> kisbaconi-iskola. Direct page loads gave the same results. /noutati still lists all 8 posts (6 seeded + 2 TEST). Member galleries are still scoped: ajtai-iskola 1 photo, nagybaconi-iskola 3, kisbaconi-ovoda and nagybaconi-ovoda 0. The HU 'Titkárság' typo is fixed in i18n.tsx. Both TEST posts were deleted; 6 posts remain.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MemberInstitution: the member-no-news message only appears once news.data is loaded, and there is no error state. If /news fails, the section stays silently empty (minor).",
+    "The backend GET /news?institution filter is now unused by the frontend. Filtering on the client is fine at the current size (limit 500)."
+  ],
+  "updated_files": ["/app/test_reports/iteration_4.json"],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100%"},
+  "seed_data_creation": "Temporary posts 53fb9923... (ajtai-iskola) and 085f59ad... (kisbaconi-ovoda) were created and then deleted. The DB is back to 6 seeded posts.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Seeded news: ajtai-iskola 2, kisbaconi-iskola 2, nagybaconi-iskola 2. Gallery: 533a3b18 = ajtai-iskola, 3 = nagybaconi-iskola. API login: POST /api/auth/login sets a cookie. An empty member-news grid has zero height, so wait with state='attached' or wait for member-no-news."
+}

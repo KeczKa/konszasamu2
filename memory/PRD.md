@@ -16,6 +16,10 @@ Kapcsolat only in header right; footer reorganised (Tanári portál centre, cont
 - Removed "Testvériskolák" section (About) and "Magyar nyelvű oktatás" hero badge.
 - Home gallery: one-tap institution filter chips (Mind + 6); institution name shown as frosted pill on each photo.
 
+## Iteration 4 (done)
+- Lightbox shows institution name on the enlarged photo; home quote section removed; footer slimmer.
+- Member pages show their own gallery photos.
+- Bug fix: member page news filtered client-side by institution (robust even with an older backend). Tested (iteration_4).
+
 ## Backlog
-- P1: Show institution gallery on member page
 - P2: Document categories (közlemény vs határozat), search
