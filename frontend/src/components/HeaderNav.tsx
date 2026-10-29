@@ -91,7 +91,7 @@ export function HeaderNav() {
           <Link to="/" data-testid="nav-logo" className="flex min-w-0 items-center gap-2 sm:gap-3">
             <Crest className="h-9 w-9 sm:h-10 sm:w-10" />
             <span className="leading-tight">
-              <span className="block font-heading font-semibold text-base sm:text-lg text-ink">{t.brand.nameShort}</span>
+              <span className="block whitespace-nowrap font-heading font-semibold text-sm sm:text-lg text-ink">{t.brand.nameShort}</span>
               <span className="hidden sm:block text-[11px] tracking-wide text-stone-500">{t.brand.location}</span>
             </span>
           </Link>

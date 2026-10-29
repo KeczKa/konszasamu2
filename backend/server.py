@@ -6,7 +6,6 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List, Optional
 import asyncio
-import uuid
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, Response, File, UploadFile

@@ -1,0 +1,23 @@
+{
+  "summary": "Frontend-only test of header/footer/members restructure. All 6 requested features verified on desktop (1920) and mobile (390), in HU and RO. Only 1 /contact link (nav-cta) on /, /despre, /noutati, /contact and member pages. Tagintézmények dropdown sits after Iskolánkról; it opens on hover and lists 5 items, and each item goes to /tagintezmenyek/<slug> with the right title in HU and RO. An unknown slug redirects to /. Mobile menu shows 5 indented sub-items, closes when one is clicked, and no page overflows (scrollWidth=390). Footer has only one link, footer-admin-link (30px, middle column, goes to /admin/login); address/hours/email are in the right column. No marquee, no 'Kik vagyunk' mission section, no 'Szeretnél megismerni minket?' CTA band. No page errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Mobile header 390px (HU)", "issues": ["Brand name 'Konsza Samu' wraps onto 2 lines beside the lang switcher + Kapcsolat + menu button; RO fits on one line. Cosmetic only (consider whitespace-nowrap or smaller text)."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": ["Optional: stop the brand name wrapping in the mobile HU header"],
+  "critical_code_review_comments": [
+    "Members dropdown opens only via CSS hover/focus-within; a touch tap on tablets (md+) relies on focus. Works, but a click toggle plus aria-expanded would be more accessible.",
+    "In one run, a RO member page took over 30s to load in the preview (it passed on retry); probably the slow Vite dev server, not an app bug."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Vite React TS frontend. Lang toggle: lang-switch-hu / lang-switch-ro. Members are defined in src/lib/i18n.tsx (t.members). Routes: /tagintezmenyek/:slug; unknown slug redirects to /."
+}
