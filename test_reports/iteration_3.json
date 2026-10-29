@@ -1,0 +1,31 @@
+{
+  "summary": "Frontend-only test of iteration 3 changes, run with Playwright at 1920x800, 1920x1080 and 390x844. Lightbox institution pill: PASS. It is visible, sits inside the image bounds (bottom-left) at desktop and mobile, and updates on prev/next. Clicking the image or the pill keeps the lightbox open. Backdrop, close button and Escape close it. Home filter chips work, and the lightbox after filtering cycles only the filtered photos (RO names shown in RO). home-quote is gone in HU and RO. Footer has the admin link, address, hours and email, with no horizontal overflow at 390. It measures 284px at desktop, over the ~260px target. Member pages: ajtai-iskola shows exactly photo 533a3b18..., no filter chips, and the lightbox says 'Ajtai Iskola'. nagybaconi-iskola shows the other 3. ajtai-ovoda shows gallery-empty. Admin upload tagged ajtai-ovoda appeared on /tagintezmenyek/ajtai-ovoda with the 'Ajtai Óvoda' pill, then was deleted (cleaned up). NOTE: at test start ALL 4 photos were nagybaconi-iskola in the preview DB, not one ajtai-iskola as the request stated. I retagged 533a3b18... to ajtai-iskola through the admin UI before the member-page tests.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "FooterEditorial / i18n", "issue": "HU hours label typo: 'Titokárság nyitvatartása' should be 'Titkárság nyitvatartása' (frontend/src/lib/i18n.tsx line 285)", "selector": "[data-testid='footer']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Footer desktop", "issues": ["Footer is 284px tall at 1920 wide, slightly over the ~260px target. Could drop py-10 to py-8 or reduce mt-8 above the copyright row. Mobile footer is 455px (stacked columns, acceptable)."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Fix the HU typo 'Titokárság' to 'Titkárság' in i18n.tsx footer.hoursLabel",
+    "Optional: trim desktop footer padding to get to <=260px",
+    "Optional: remove the unused quote strings (home quote text/author) from i18n.tsx (dead code)",
+    "Optional: on the member page GallerySection, gallery-empty shows briefly while /gallery is loading (data undefined -> photos []). Gate the empty message on query success."
+  ],
+  "critical_code_review_comments": [
+    "GallerySection: the empty state renders before the query resolves (no loading/error state), so there is a brief false 'no photos' flash on member pages",
+    "GalleryManager: deleting a photo has no confirm dialog (posts have one), which makes accidental deletes easy",
+    "The quote i18n entries in i18n.tsx (lines ~52 and ~271) are now unused"
+  ],
+  "updated_files": ["/app/test_reports/iteration_3.json"],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "97%"},
+  "seed_data_creation": "Retagged gallery photo 533a3b18bbe04d4a83ccfa82aa320355 to ajtai-iskola (intended state per request; it was nagybaconi-iskola). A temporary TEST upload tagged ajtai-ovoda was created and deleted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Preview DB gallery: 533a3b18... = ajtai-iskola, the other 3 = nagybaconi-iskola. Admin login testids: admin-email-input, admin-password-input, admin-login-submit; tab admin-tab-gallery; native selects gallery-institution-select and gallery-photo-institution-select-<id> (use select_option); upload input gallery-upload-input (hidden, use set_input_files); delete gallery-delete-<id> (hover, then force click, no confirm). Photo locator: [data-testid^='gallery-photo-']:not([data-testid^='gallery-photo-institution']). The browser tool rewrites f-string screenshot paths, so use plain string paths."
+}

@@ -282,7 +282,7 @@ const hu: typeof ro = {
     address: "Nagybacon / Bățanii Mari, Kovászna megye, Románia",
     emailLabel: "Email",
     email: "secretariat@konszasamu.ro",
-    hoursLabel: "Titokárság nyitvatartása",
+    hoursLabel: "Titkárság nyitvatartása",
     hours: "Hétfő – Péntek, 8:00 – 16:00",
     adminLink: "Tanári portál",
     rights: "Minden jog fenntartva.",

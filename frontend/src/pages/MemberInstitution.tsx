@@ -41,7 +41,8 @@ export default function MemberInstitution() {
   const { lang, t } = useLang();
   const member = t.members.find((m) => m.slug === slug);
   const info = useQuery({ queryKey: ["institution", slug], queryFn: () => apiGet<Institution>(`/institutions/${slug}`), enabled: !!member });
-  const news = useQuery({ queryKey: ["posts", slug], queryFn: () => apiGet<Post[]>(`/news?institution=${slug}`), enabled: !!member });
+  const news = useQuery({ queryKey: ["posts"], queryFn: () => apiGet<Post[]>("/news"), enabled: !!member });
+  const ownNews = (news.data ?? []).filter((p) => p.institution === slug);
   if (!member) return <Navigate to="/" replace />;
 
   const data = info.data;
@@ -100,9 +101,9 @@ export default function MemberInstitution() {
       <section className="border-t border-border bg-sand">
         <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
           <h2 className="font-heading text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{t.memberPage.news}</h2>
-          {news.data && news.data.length === 0 && <p data-testid="member-no-news" className="mt-6 text-sm text-stone-500">{t.memberPage.noNews}</p>}
+          {news.data && ownNews.length === 0 && <p data-testid="member-no-news" className="mt-6 text-sm text-stone-500">{t.memberPage.noNews}</p>}
           <div data-testid="member-news" className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {(news.data ?? []).map((p) => <NewsCard key={p.id} post={p} />)}
+            {ownNews.map((p) => <NewsCard key={p.id} post={p} />)}
           </div>
         </div>
       </section>
