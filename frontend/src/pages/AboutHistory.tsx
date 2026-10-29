@@ -73,22 +73,6 @@ export default function AboutHistory() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
-        <Reveal>
-          <h2 className="font-heading text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{t.about.sisterTitle}</h2>
-        </Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          {t.about.sister.map((s, i) => (
-            <Reveal key={s.name} delay={i * 0.1}>
-              <div data-testid={`sister-school-${i}`} className="h-full rounded-2xl border border-border bg-white p-7 shadow-[0_4px_24px_-2px_rgba(28,25,23,0.06)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-6px_rgba(28,25,23,0.14)]">
-                <h3 className="font-heading text-lg font-semibold text-ink sm:text-xl">{s.name}</h3>
-                <p className="mt-2 text-sm text-stone-500">{s.place}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
       <FooterEditorial />
     </div>
   );

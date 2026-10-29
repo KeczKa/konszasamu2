@@ -29,7 +29,6 @@ const ro = {
       { value: "1861", label: "se naște Konsza Samu" },
       { value: "2", label: "limbi, o comunitate" },
     ],
-    badge: "Învățământ în limba maghiară",
   },
   marquee: ["Tudás", "Cunoaștere", "Közösség", "Comunitate", "Hagyomány", "Tradiție", "Székelyföld", "Ținutul Secuiesc"],
   mission: {
@@ -43,6 +42,7 @@ const ro = {
   },
   homeNews: { overline: "Din viața școlii", title: "Noutăți", viewAll: "Toate noutățile", empty: "În curând vom publica prima știre." },
   life: {
+    filterAll: "Toate", empty: "Nu există fotografii pentru această structură.",
     overline: "Galerie",
     title: "Clipe din fiecare zi",
     alts: ["Elevi în clasă la ore", "Elevă scriind la banchetă", "Dealurile din jurul satului", "Biblioteca școlii"],
@@ -111,11 +111,6 @@ const ro = {
       { title: "Clasele I–VIII", text: "Învățământ primar și gimnazial cu predare în limba maghiară, conform curriculumului național." },
       { title: "Grădiniță", text: "Grupe de grădiniță cu program normal și prelungit, într-un mediu cald și sigur." },
       { title: "After-school", text: "Teme asistate, cercuri de folclor, sport și activități creative după ore." },
-    ],
-    sisterTitle: "Școli surori",
-    sister: [
-      { name: "Școala Gimnazială „Ajtai Abod Mihály”", place: "Aita Seacă / Szárazajta" },
-      { name: "Școala Primară „Benedek Elek”", place: "Bățanii Mici / Kisbacon" },
     ],
   },
   contact: {
@@ -254,7 +249,6 @@ const hu: typeof ro = {
       { value: "1861", label: "Konsza Samu születése" },
       { value: "2", label: "nyelv, egy közösség" },
     ],
-    badge: "Magyar nyelvű oktatás",
   },
   marquee: ["Tudás", "Cunoaștere", "Közösség", "Comunitate", "Hagyomány", "Tradiție", "Székelyföld", "Ținutul Secuiesc"],
   mission: {
@@ -268,6 +262,7 @@ const hu: typeof ro = {
   },
   homeNews: { overline: "Iskolai élet", title: "Hírek", viewAll: "Összes hír", empty: "Hamarosan közzétesszük az első hírt." },
   life: {
+    filterAll: "Mind", empty: "Ehhez a tagintézményhez még nincs fotó.",
     overline: "Galéria",
     title: "Pillanatok a mindennapokból",
     alts: ["Diákok az osztályteremben", "Tanuló jegyzetel a padban", "A falu környéki dombok", "Az iskolai könyvtár"],
@@ -336,11 +331,6 @@ const hu: typeof ro = {
       { title: "I–VIII. osztály", text: "Általános iskolai oktatás magyar nyelven, a nemzeti tanterv szerint." },
       { title: "Óvoda", text: "Normál és hosszabbított óvodai csoportok, meleg és biztonságos környezetben." },
       { title: "Napközis programok", text: "Felügyelt házi feladat, népművészeti szakkörök, sport és alkotó tevékenységek." },
-    ],
-    sisterTitle: "Testvériskolák",
-    sister: [
-      { name: "Ajtai Abod Mihály Általános Iskola", place: "Szárazajta / Aita Seacă" },
-      { name: "Benedek Elek Általános Iskola", place: "Kisbacon / Bățanii Mici" },
     ],
   },
   contact: {

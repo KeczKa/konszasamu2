@@ -12,6 +12,10 @@ Kapcsolat only in header right; footer reorganised (Tanári portál centre, cont
 - Gallery: institution required on upload, changeable per photo; institution name overlay on public gallery + lightbox.
 - Preview-only backend/.env created (local Mongo, preview admin) – production uses k8s secret.
 
+## Iteration 3 (done)
+- Removed "Testvériskolák" section (About) and "Magyar nyelvű oktatás" hero badge.
+- Home gallery: one-tap institution filter chips (Mind + 6); institution name shown as frosted pill on each photo.
+
 ## Backlog
-- P1: Filter gallery by institution / show institution gallery on member page
+- P1: Show institution gallery on member page
 - P2: Document categories (közlemény vs határozat), search

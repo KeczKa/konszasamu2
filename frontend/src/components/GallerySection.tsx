@@ -5,6 +5,7 @@ import { useLang, memberName } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
 import type { GalleryPhoto } from "@/lib/types";
 import { Reveal } from "@/components/Reveal";
+import { cn } from "@/lib/utils";
 
 const FALLBACK: GalleryPhoto[] = [
   { id: "fallback-1", src: "/images/classroom.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
@@ -16,7 +17,10 @@ const FALLBACK: GalleryPhoto[] = [
 export function GallerySection() {
   const { t } = useLang();
   const { data } = useQuery({ queryKey: ["gallery"], queryFn: () => apiGet<GalleryPhoto[]>("/gallery"), retry: 1 });
-  const photos = data && data.length > 0 ? data : FALLBACK;
+  const [filter, setFilter] = useState("all");
+  const hasPhotos = !!data && data.length > 0;
+  const all = hasPhotos ? data : FALLBACK;
+  const photos = filter === "all" ? all : all.filter((p) => p.institution === filter);
 
   const [active, setActive] = useState<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -24,6 +28,10 @@ export function GallerySection() {
   const close = () => setActive(null);
   const step = (dir: number) => setActive((cur) => (cur === null ? null : (cur + dir + photos.length) % photos.length));
   const scrollTrack = (dir: number) => trackRef.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
+  const chooseFilter = (slug: string) => {
+    setFilter(slug);
+    trackRef.current?.scrollTo({ left: 0 });
+  };
 
   useEffect(() => {
     if (active === null) return;
@@ -43,7 +51,28 @@ export function GallerySection() {
         <h2 className="mt-4 font-heading text-2xl font-semibold tracking-tight text-ink sm:text-3xl lg:text-4xl">{t.life.title}</h2>
       </Reveal>
 
-      <div className="relative mt-12">
+      {hasPhotos && (
+        <div data-testid="gallery-filters" className="mt-8 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap [&::-webkit-scrollbar]:hidden">
+          {["all", ...t.members.map((m) => m.slug)].map((slug) => (
+            <button
+              key={slug}
+              data-testid={`gallery-filter-${slug}`}
+              aria-pressed={filter === slug}
+              onClick={() => chooseFilter(slug)}
+              className={cn(
+                "shrink-0 cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200",
+                filter === slug ? "border-clay bg-clay text-clay-foreground" : "border-border bg-white text-stone-700 hover:border-clay hover:text-clay"
+              )}
+            >
+              {slug === "all" ? t.life.filterAll : memberName(t, slug)}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {photos.length === 0 && <p data-testid="gallery-empty" className="mt-10 text-sm text-stone-500">{t.life.empty}</p>}
+
+      <div className={cn("relative mt-8", photos.length === 0 && "hidden")}>
         <button
           data-testid="gallery-scroll-left"
           onClick={() => scrollTrack(-1)}
@@ -75,12 +104,15 @@ export function GallerySection() {
                 className="h-64 w-52 object-cover transition-transform duration-500 group-hover:scale-105 sm:h-80 sm:w-64"
               />
               {p.institution && (
-                <span
-                  data-testid={`gallery-photo-institution-${p.id}`}
-                  className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/75 via-ink/40 to-transparent px-4 pb-3 pt-10 text-left text-sm font-medium tracking-wide text-cream [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]"
-                >
-                  {memberName(t, p.institution)}
-                </span>
+                <>
+                  <span className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent" aria-hidden="true" />
+                  <span
+                    data-testid={`gallery-photo-institution-${p.id}`}
+                    className="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] truncate rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-medium tracking-wide text-cream backdrop-blur-md"
+                  >
+                    {memberName(t, p.institution)}
+                  </span>
+                </>
               )}
             </button>
           ))}

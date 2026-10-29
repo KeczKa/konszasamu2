@@ -76,9 +76,6 @@ export default function Home() {
                 className="aspect-[4/5] w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent" />
-              <figcaption className="absolute bottom-5 left-5 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-medium tracking-wide text-cream backdrop-blur-md">
-                {t.hero.badge}
-              </figcaption>
             </motion.figure>
           </div>
         </div>
