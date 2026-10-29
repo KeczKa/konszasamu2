@@ -7,6 +7,7 @@ import type { Institution, Post } from "@/lib/types";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { NewsCard } from "@/components/NewsCard";
+import { GallerySection } from "@/components/GallerySection";
 import { Reveal } from "@/components/Reveal";
 
 function ContactCard({ info }: { info: Institution }) {
@@ -91,6 +92,10 @@ export default function MemberInstitution() {
           </div>
         )}
       </section>
+
+      <div className="border-t border-border">
+        <GallerySection institution={member.slug} />
+      </div>
 
       <section className="border-t border-border bg-sand">
         <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">

@@ -14,12 +14,13 @@ const FALLBACK: GalleryPhoto[] = [
   { id: "fallback-4", src: "/images/library?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
 ];
 
-export function GallerySection() {
+export function GallerySection({ institution }: { institution?: string }) {
   const { t } = useLang();
   const { data } = useQuery({ queryKey: ["gallery"], queryFn: () => apiGet<GalleryPhoto[]>("/gallery"), retry: 1 });
-  const [filter, setFilter] = useState("all");
+  const [chosen, setChosen] = useState("all");
+  const filter = institution ?? chosen;
   const hasPhotos = !!data && data.length > 0;
-  const all = hasPhotos ? data : FALLBACK;
+  const all = hasPhotos || institution ? data ?? [] : FALLBACK;
   const photos = filter === "all" ? all : all.filter((p) => p.institution === filter);
 
   const [active, setActive] = useState<number | null>(null);
@@ -29,7 +30,7 @@ export function GallerySection() {
   const step = (dir: number) => setActive((cur) => (cur === null ? null : (cur + dir + photos.length) % photos.length));
   const scrollTrack = (dir: number) => trackRef.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
   const chooseFilter = (slug: string) => {
-    setFilter(slug);
+    setChosen(slug);
     trackRef.current?.scrollTo({ left: 0 });
   };
 
@@ -45,13 +46,13 @@ export function GallerySection() {
   }, [active, photos.length]);
 
   return (
-    <section data-testid="gallery-section" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+    <section data-testid="gallery-section" className={cn("mx-auto max-w-7xl px-5 sm:px-8", institution ? "py-16" : "py-20 sm:py-28")}>
       <Reveal>
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay">{t.life.overline}</p>
         <h2 className="mt-4 font-heading text-2xl font-semibold tracking-tight text-ink sm:text-3xl lg:text-4xl">{t.life.title}</h2>
       </Reveal>
 
-      {hasPhotos && (
+      {hasPhotos && !institution && (
         <div data-testid="gallery-filters" className="mt-8 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap [&::-webkit-scrollbar]:hidden">
           {["all", ...t.members.map((m) => m.slug)].map((slug) => (
             <button
@@ -145,19 +146,23 @@ export function GallerySection() {
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
-          {photos[active].institution && (
-            <p data-testid="gallery-lightbox-institution" className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/25 bg-ink/40 px-5 py-2 text-sm font-medium text-cream backdrop-blur-md">
-              {memberName(t, photos[active].institution)}
-            </p>
-          )}
-          <img
-            src={photos[active].src}
-            alt={photos[active].original_filename || t.life.alts[active % t.life.alts.length]}
-            data-testid="gallery-lightbox-image"
-            onClick={(e) => e.stopPropagation()}
-            onContextMenu={(e) => e.preventDefault()}
-            className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
-          />
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={photos[active].src}
+              alt={photos[active].original_filename || t.life.alts[active % t.life.alts.length]}
+              data-testid="gallery-lightbox-image"
+              onContextMenu={(e) => e.preventDefault()}
+              className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+            />
+            {photos[active].institution && (
+              <p
+                data-testid="gallery-lightbox-institution"
+                className="absolute bottom-5 left-5 max-w-[calc(100%-2.5rem)] truncate rounded-full border border-white/25 bg-ink/30 px-5 py-2.5 text-sm font-medium tracking-wide text-cream backdrop-blur-md sm:text-base"
+              >
+                {memberName(t, photos[active].institution)}
+              </p>
+            )}
+          </div>
           <button
             data-testid="gallery-lightbox-next"
             onClick={(e) => { e.stopPropagation(); step(1); }}

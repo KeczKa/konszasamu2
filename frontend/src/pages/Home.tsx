@@ -130,17 +130,6 @@ export default function Home() {
 
       <GallerySection />
 
-      <section className="bg-ink text-cream">
-        <div className="mx-auto max-w-4xl px-5 py-24 text-center sm:px-8 sm:py-32">
-          <Reveal>
-            <blockquote data-testid="home-quote" className="font-heading text-2xl font-medium italic leading-snug sm:text-3xl lg:text-4xl">
-              {t.quote.text}
-            </blockquote>
-            <p className="mt-6 text-sm text-stone-400">{t.quote.author}</p>
-          </Reveal>
-        </div>
-      </section>
-
       <FooterEditorial />
     </div>
   );
