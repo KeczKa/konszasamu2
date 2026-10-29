@@ -6,9 +6,9 @@ Step 1: MongoDB check — `db.users.find({role:"admin"})` should show one admin 
 
 Step 2: API check:
 ```
-curl -c cookies.txt -X POST https://workplace-site-v2.preview.emergentagent.com/api/auth/login -H "Content-Type: application/json" -d '{"email":"<admin email>","password":"<admin password>"}'
-curl -b cookies.txt https://workplace-site-v2.preview.emergentagent.com/api/auth/me
-curl -b cookies.txt -X POST https://workplace-site-v2.preview.emergentagent.com/api/auth/logout
+curl -c cookies.txt -X POST https://iskola-frissites--8e91ytku.preview.emergentagent.com/api/auth/login -H "Content-Type: application/json" -d '{"email":"<admin email>","password":"<admin password>"}'
+curl -b cookies.txt https://iskola-frissites--8e91ytku.preview.emergentagent.com/api/auth/me
+curl -b cookies.txt -X POST https://iskola-frissites--8e91ytku.preview.emergentagent.com/api/auth/logout
 ```
 Login returns the admin user object and sets the cookie; /me returns the same user; wrong password returns 401 with a detail string; 5 wrong attempts return 429.
 
@@ -35,7 +35,7 @@ db.user_sessions.insertOne({
   session_token: 'test_google_session_1',
   expires_at: new Date(Date.now() + 7*24*60*60*1000), created_at: new Date()
 });"
-curl -b "session_token=test_google_session_1" https://workplace-site-v2.preview.emergentagent.com/api/auth/me
+curl -b "session_token=test_google_session_1" https://iskola-frissites--8e91ytku.preview.emergentagent.com/api/auth/me
 # cleanup:
 mongosh --eval "use('app'); db.user_sessions.deleteMany({session_token: /test_google/});"
 ```

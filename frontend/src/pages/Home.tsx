@@ -9,7 +9,6 @@ import { apiGet } from "@/lib/api";
 import type { Post } from "@/lib/types";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
-import { EditorialMarquee } from "@/components/EditorialMarquee";
 import { MaskedLine, Reveal, FadeIn } from "@/components/Reveal";
 import { GallerySection } from "@/components/GallerySection";
 import { buttonVariants } from "@/components/ui/button";
@@ -55,13 +54,6 @@ export default function Home() {
                 >
                   {t.hero.ctaPrimary} <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
-                <Link
-                  to="/contact"
-                  data-testid="hero-cta-contact"
-                  className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full border-ink/20 transition-transform duration-200 hover:-translate-y-0.5")}
-                >
-                  {t.hero.ctaSecondary}
-                </Link>
               </div>
               <div className="mt-12 grid grid-cols-3 gap-6 border-t border-border pt-8">
                 {t.hero.stats.map((s) => (
@@ -89,40 +81,6 @@ export default function Home() {
               </figcaption>
             </motion.figure>
           </div>
-        </div>
-      </section>
-
-      <EditorialMarquee />
-
-      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-        <Reveal>
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay">{t.mission.overline}</p>
-          <h2 className="mt-4 max-w-2xl font-heading text-2xl font-semibold tracking-tight text-ink sm:text-3xl lg:text-4xl">
-            {t.mission.title}
-          </h2>
-        </Reveal>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {t.mission.cards.map((card, i) => (
-            <Reveal key={card.title} delay={i * 0.12}>
-              <article
-                data-testid={`mission-card-${i}`}
-                className={cn(
-                  "h-full rounded-2xl border border-border p-7 shadow-[0_4px_24px_-2px_rgba(28,25,23,0.06)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-6px_rgba(28,25,23,0.14)]",
-                  i === 1 ? "bg-forest text-forest-foreground border-forest" : "bg-white"
-                )}
-              >
-                <span className={cn("font-mono text-xs tracking-[0.2em]", i === 1 ? "text-lime-200" : "text-clay")}>
-                  0{i + 1}
-                </span>
-                <h3 className={cn("mt-4 font-heading text-xl font-semibold sm:text-2xl", i === 1 ? "text-forest-foreground" : "text-ink")}>
-                  {card.title}
-                </h3>
-                <p className={cn("mt-3 text-sm leading-relaxed", i === 1 ? "text-forest-foreground/80" : "text-stone-600")}>
-                  {card.text}
-                </p>
-              </article>
-            </Reveal>
-          ))}
         </div>
       </section>
 
@@ -184,22 +142,6 @@ export default function Home() {
             <p className="mt-6 text-sm text-stone-400">{t.quote.author}</p>
           </Reveal>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-        <Reveal>
-          <div className="rounded-3xl bg-clay px-8 py-14 text-center text-clay-foreground sm:px-16 sm:py-20">
-            <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl">{t.ctaBand.title}</h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-clay-foreground/85 sm:text-base">{t.ctaBand.text}</p>
-            <Link
-              to="/contact"
-              data-testid="cta-band-button"
-              className={cn(buttonVariants({ size: "lg" }), "mt-8 rounded-full bg-cream text-ink hover:bg-white transition-transform duration-200 hover:-translate-y-0.5")}
-            >
-              {t.ctaBand.button}
-            </Link>
-          </div>
-        </Reveal>
       </section>
 
       <FooterEditorial />

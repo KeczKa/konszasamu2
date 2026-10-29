@@ -2,7 +2,6 @@ import { BookOpen, GraduationCap, Users } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
-import { EditorialMarquee } from "@/components/EditorialMarquee";
 import { Reveal } from "@/components/Reveal";
 
 const LIBRARY_IMG = "/images/library.jpg?crop=entropy&cs=srgb&fm=jpg&q=85";
@@ -28,8 +27,6 @@ export default function AboutHistory() {
           </Reveal>
         </div>
       </section>
-
-      <EditorialMarquee />
 
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
         <Reveal>

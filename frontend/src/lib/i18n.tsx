@@ -9,7 +9,14 @@ const ro = {
     nameShort: "Konsza Samu",
     location: "Bățanii Mari, Jud. Covasna",
   },
-  nav: { home: "Acasă", about: "Despre Școală", news: "Noutăți", contact: "Contact" },
+  nav: { home: "Acasă", about: "Despre Școală", members: "Structuri arondate", news: "Noutăți", contact: "Contact" },
+  members: [
+    { slug: "ajtai-iskola", name: "Școala Aita Medie" },
+    { slug: "kisbaconi-iskola", name: "Școala Bățanii Mici" },
+    { slug: "kisbaconi-ovoda", name: "Grădinița Bățanii Mici" },
+    { slug: "nagybaconi-ovoda", name: "Grădinița Bățanii Mari" },
+    { slug: "ajtai-ovoda", name: "Grădinița Aita Medie" },
+  ],
   hero: {
     overline: "Ținutul Secuiesc • Județul Covasna",
     lines: ["Școala Gimnazială", "„Konsza Samu”", "Bățanii Mari"],
@@ -183,7 +190,14 @@ const hu: typeof ro = {
     nameShort: "Konsza Samu",
     location: "Nagybacon, Kovászna megye",
   },
-  nav: { home: "Főoldal", about: "Iskolánkról", news: "Hírek", contact: "Kapcsolat" },
+  nav: { home: "Főoldal", about: "Iskolánkról", members: "Tagintézmények", news: "Hírek", contact: "Kapcsolat" },
+  members: [
+    { slug: "ajtai-iskola", name: "Ajtai Iskola" },
+    { slug: "kisbaconi-iskola", name: "Kisbaconi Iskola" },
+    { slug: "kisbaconi-ovoda", name: "Kisbaconi Óvoda" },
+    { slug: "nagybaconi-ovoda", name: "Nagybaconi Óvoda" },
+    { slug: "ajtai-ovoda", name: "Ajtai Óvoda" },
+  ],
   hero: {
     overline: "Székelyföld • Kovászna megye",
     lines: ["Konsza Samu", "Általános Iskola", "Nagybacon"],

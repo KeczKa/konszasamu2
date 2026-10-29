@@ -11,7 +11,7 @@ export function FooterEditorial() {
         KONSZA SAMU
       </div>
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 py-16 sm:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-12 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
               <Crest className="h-11 w-11" />
@@ -19,7 +19,12 @@ export function FooterEditorial() {
             </div>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-stone-300">{t.footer.tagline}</p>
           </div>
-          <div className="space-y-4 text-sm">
+          <div className="flex md:items-center md:justify-center">
+            <Link data-testid="footer-admin-link" to="/admin/login" className="font-heading text-2xl font-semibold text-cream transition-colors duration-200 hover:text-orange-300 sm:text-3xl">
+              {t.footer.adminLink} →
+            </Link>
+          </div>
+          <div className="space-y-4 text-sm md:justify-self-end">
             <div className="flex gap-3">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-300" />
               <div>
@@ -41,14 +46,6 @@ export function FooterEditorial() {
                 <p className="mt-1 text-stone-200">{t.footer.email}</p>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-3 text-sm md:items-end">
-            <Link data-testid="footer-news-link" to="/noutati" className="text-stone-300 transition-colors duration-200 hover:text-orange-300">{t.nav.news}</Link>
-            <Link data-testid="footer-about-link" to="/despre" className="text-stone-300 transition-colors duration-200 hover:text-orange-300">{t.nav.about}</Link>
-            <Link data-testid="footer-contact-link" to="/contact" className="text-stone-300 transition-colors duration-200 hover:text-orange-300">{t.nav.contact}</Link>
-            <Link data-testid="footer-admin-link" to="/admin/login" className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors duration-200 hover:text-orange-300">
-              {t.footer.adminLink} →
-            </Link>
           </div>
         </div>
         <div className="mt-14 border-t border-cream/10 pt-6 text-xs text-stone-500">
