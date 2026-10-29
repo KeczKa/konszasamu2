@@ -11,7 +11,12 @@ CONTENT_TYPES = {
     ".png": "image/png",
     ".webp": "image/webp",
     ".gif": "image/gif",
+    ".pdf": "application/pdf",
 }
+
+
+def delete_object(path: str) -> None:
+    _safe_path(path).unlink(missing_ok=True)
 
 
 def _safe_path(relative_path: str) -> Path:

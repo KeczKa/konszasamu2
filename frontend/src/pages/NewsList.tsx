@@ -4,10 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { ro as roLocale, hu as huLocale } from "date-fns/locale";
-import { useLang, pick } from "@/lib/i18n";
+import { useLang, pick, memberName } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
 import type { Post } from "@/lib/types";
-import { CATEGORIES } from "@/lib/types";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { Reveal } from "@/components/Reveal";
@@ -19,7 +18,7 @@ export default function NewsList() {
   const posts = useQuery({ queryKey: ["posts"], queryFn: () => apiGet<Post[]>("/news"), retry: 1 });
 
   const all = posts.data ?? [];
-  const filtered = filter === "all" ? all : all.filter((p) => p.category === filter);
+  const filtered = filter === "all" ? all : all.filter((p) => p.institution === filter);
   const [featured, ...rest] = filtered;
 
   const fmt = (iso: string) => format(new Date(iso), "d MMMM yyyy", { locale: lang === "ro" ? roLocale : huLocale });
@@ -37,7 +36,7 @@ export default function NewsList() {
 
         <Reveal delay={0.15}>
           <div data-testid="news-filters" className="mt-10 flex flex-wrap gap-2">
-            {["all", ...CATEGORIES].map((c) => (
+            {["all", ...t.members.map((m) => m.slug)].map((c) => (
               <button
                 key={c}
                 data-testid={`news-filter-${c}`}
@@ -48,7 +47,7 @@ export default function NewsList() {
                   filter === c ? "border-clay bg-clay text-clay-foreground" : "border-border bg-white text-stone-600 hover:border-clay/40 hover:text-clay"
                 )}
               >
-                {c === "all" ? t.newsPage.all : t.newsPage.categories[c]}
+                {c === "all" ? t.newsPage.all : memberName(t, c)}
               </button>
             ))}
           </div>
@@ -101,7 +100,7 @@ export default function NewsList() {
                 )}
                 <div className="flex flex-1 flex-col p-6">
                   <span className="w-fit rounded-full bg-sand px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-clay">
-                    {t.newsPage.categories[p.category] ?? p.category}
+                    {memberName(t, p.institution)}
                   </span>
                   <h3 className="mt-3 font-heading text-lg font-semibold leading-snug text-ink transition-colors duration-200 group-hover:text-clay">
                     {pick(lang, p, "title")}

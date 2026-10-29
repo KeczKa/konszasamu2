@@ -4,13 +4,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Circle, FileText, Inbox, LogOut, Newspaper, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { useLang } from "@/lib/i18n";
+import { useLang, memberName } from "@/lib/i18n";
 import { apiDelete, apiGet, apiPatch, apiPost, apiPut, apiUpload } from "@/lib/api";
 import type { AdminUser, ContactMessage, Post } from "@/lib/types";
-import { CATEGORIES } from "@/lib/types";
+import { IMAGE_TYPES } from "@/lib/types";
 import { Crest } from "@/components/Crest";
 import { GalleryManager } from "@/components/admin/GalleryManager";
 import { UsersManager } from "@/components/admin/UsersManager";
+import { InstitutionsManager } from "@/components/admin/InstitutionsManager";
+import { DocumentsManager } from "@/components/admin/DocumentsManager";
+import { InstitutionSelect } from "@/components/admin/InstitutionSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,11 +25,11 @@ interface FormState {
   title_hu: string;
   content_ro: string;
   content_hu: string;
-  category: string;
+  institution: string;
   cover_image: string;
 }
 
-const EMPTY_FORM: FormState = { title_ro: "", title_hu: "", content_ro: "", content_hu: "", category: "announcement", cover_image: "" };
+const EMPTY_FORM: FormState = { title_ro: "", title_hu: "", content_ro: "", content_hu: "", institution: "", cover_image: "" };
 
 export default function AdminDashboard() {
   const { t } = useLang();
@@ -60,20 +63,8 @@ export default function AdminDashboard() {
   const uploadCover = async (file?: File) => {
   if (!file) return;
 
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-  ];
-
-  if (!allowedTypes.includes(file.type)) {
-    toast.error("Please select a JPEG, PNG, WebP or GIF image.");
-    return;
-  }
-
-  if (file.size > 10 * 1024 * 1024) {
-    toast.error("The image must be 10 MB or smaller.");
+  if (!IMAGE_TYPES.includes(file.type) || file.size > 10 * 1024 * 1024) {
+    toast.error(t.admin.imageError);
     return;
   }
 
@@ -84,9 +75,8 @@ export default function AdminDashboard() {
       file,
     );
     setForm((current) => ({ ...current, cover_image: result.url }));
-    toast.success("Cover image uploaded.");
   } catch {
-    toast.error("Cover image upload failed.");
+    toast.error(t.admin.uploadError);
   } finally {
     setCoverUploading(false);
   }
@@ -118,8 +108,10 @@ export default function AdminDashboard() {
     { key: "posts", label: t.admin.tabPosts },
     { key: "messages", label: t.admin.tabMessages },
     { key: "gallery", label: t.admin.tabGallery },
+    { key: "institutions", label: t.admin.tabInstitutions },
+    { key: "documents", label: t.admin.tabDocuments },
     { key: "users", label: t.admin.tabUsers },
-  ].filter((d) => perms.has(d.key === "posts" ? "posts" : d.key === "messages" ? "messages" : d.key === "gallery" ? "gallery" : "users"));
+  ].filter((d) => perms.has(d.key));
   const activeTab = tabDefs.some((d) => d.key === tab) ? tab : (tabDefs[0]?.key ?? "");
 
   const allPosts = posts.data ?? [];
@@ -128,7 +120,7 @@ export default function AdminDashboard() {
 
   const startEdit = (p: Post) => {
     setEditingId(p.id);
-    setForm({ title_ro: p.title_ro, title_hu: p.title_hu, content_ro: p.content_ro, content_hu: p.content_hu, category: p.category, cover_image: p.cover_image });
+    setForm({ title_ro: p.title_ro, title_hu: p.title_hu, content_ro: p.content_ro, content_hu: p.content_hu, institution: p.institution, cover_image: p.cover_image });
     setShowForm(true);
   };
 
@@ -240,21 +232,11 @@ export default function AdminDashboard() {
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="f-category">{t.admin.category}</Label>
-                    <select
-                      id="f-category"
-                      data-testid="post-category-select"
-                      value={form.category}
-                      onChange={(e) => setForm({ ...form, category: e.target.value })}
-                      className="border-input bg-background flex h-9 w-full rounded-md border px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-                    >
-                      {CATEGORIES.map((c) => (
-                        <option key={c} value={c}>{t.newsPage.categories[c]}</option>
-                      ))}
-                    </select>
+                    <Label htmlFor="f-institution">{t.admin.institution} *</Label>
+                    <InstitutionSelect id="f-institution" testId="post-institution-select" value={form.institution} onChange={(v) => setForm({ ...form, institution: v })} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="f-cover-file">Article cover image</Label>
+                    <Label htmlFor="f-cover-file">{t.admin.coverImage}</Label>
                     <Input
                       id="f-cover-file"
                       type="file"
@@ -268,14 +250,14 @@ export default function AdminDashboard() {
                     />
 
                     {coverUploading && (
-                      <p className="text-sm text-stone-500">Uploading image…</p>
+                      <p className="text-sm text-stone-500">{t.admin.uploadingImage}</p>
                     )}
 
                     {form.cover_image && (
                       <div className="space-y-2">
                         <img
                           src={form.cover_image}
-                          alt="Article cover preview"
+                          alt=""
                           className="max-h-48 rounded-xl border border-border object-cover"
                         />
                         <Button
@@ -286,7 +268,7 @@ export default function AdminDashboard() {
                             setForm((current) => ({ ...current, cover_image: "" }))
                           }
                         >
-                          Remove cover
+                          {t.admin.removeCover}
                         </Button>
                       </div>
                     )}
@@ -310,7 +292,7 @@ export default function AdminDashboard() {
                   <div className="min-w-0">
                     <h3 className="truncate font-heading text-lg font-semibold">{p.title_hu}</h3>
                     <p className="text-xs text-stone-500">
-                      {t.newsPage.categories[p.category] ?? p.category} • {format(new Date(p.created_at), "yyyy-MM-dd")}
+                      {memberName(t, p.institution)} • {format(new Date(p.created_at), "yyyy-MM-dd")}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -355,6 +337,10 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "gallery" && <GalleryManager />}
+
+        {activeTab === "institutions" && <InstitutionsManager />}
+
+        {activeTab === "documents" && <DocumentsManager />}
 
         {activeTab === "users" && <UsersManager currentUserId={me.data.id} />}
       </main>

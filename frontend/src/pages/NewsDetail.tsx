@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
 import { format } from "date-fns";
 import { ro as roLocale, hu as huLocale } from "date-fns/locale";
-import { useLang, pick } from "@/lib/i18n";
+import { useLang, pick, memberName } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
 import type { Post } from "@/lib/types";
 import { HeaderNav } from "@/components/HeaderNav";
@@ -38,9 +38,9 @@ export default function NewsDetail() {
         {p && (
           <>
             <Reveal delay={0.1}>
-              <span className="mt-8 inline-block rounded-full bg-sand px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-clay">
-                {t.newsPage.categories[p.category] ?? p.category}
-              </span>
+              <Link to={`/tagintezmenyek/${p.institution}`} data-testid="news-detail-institution" className="mt-8 inline-block rounded-full bg-sand px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-clay transition-colors duration-200 hover:bg-clay hover:text-clay-foreground">
+                {memberName(t, p.institution)}
+              </Link>
               <h1 data-testid="news-detail-title" className="mt-4 font-heading text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
                 {pick(lang, p, "title")}
               </h1>

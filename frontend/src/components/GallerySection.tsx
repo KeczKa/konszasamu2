@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useLang } from "@/lib/i18n";
+import { useLang, memberName } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
 import type { GalleryPhoto } from "@/lib/types";
 import { Reveal } from "@/components/Reveal";
 
 const FALLBACK: GalleryPhoto[] = [
-  { id: "fallback-1", src: "/images/classroom.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", created_at: "" },
-  { id: "fallback-2", src: "/images/students.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", created_at: "" },
-  { id: "fallback-3", src: "/images/village.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", created_at: "" },
-  { id: "fallback-4", src: "/images/library?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", created_at: "" },
+  { id: "fallback-1", src: "/images/classroom.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
+  { id: "fallback-2", src: "/images/students.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
+  { id: "fallback-3", src: "/images/village.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
+  { id: "fallback-4", src: "/images/library?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
 ];
 
 export function GallerySection() {
@@ -67,13 +67,21 @@ export function GallerySection() {
               key={p.id}
               data-testid={`gallery-photo-${p.id}`}
               onClick={() => setActive(i)}
-              className="group shrink-0 cursor-zoom-in snap-start overflow-hidden rounded-2xl border border-border p-0"
+              className="group relative shrink-0 cursor-zoom-in snap-start overflow-hidden rounded-2xl border border-border p-0"
             >
               <img
                 src={p.src}
                 alt={p.original_filename || t.life.alts[i % t.life.alts.length]}
                 className="h-64 w-52 object-cover transition-transform duration-500 group-hover:scale-105 sm:h-80 sm:w-64"
               />
+              {p.institution && (
+                <span
+                  data-testid={`gallery-photo-institution-${p.id}`}
+                  className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/75 via-ink/40 to-transparent px-4 pb-3 pt-10 text-left text-sm font-medium tracking-wide text-cream [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]"
+                >
+                  {memberName(t, p.institution)}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -105,6 +113,11 @@ export function GallerySection() {
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
+          {photos[active].institution && (
+            <p data-testid="gallery-lightbox-institution" className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/25 bg-ink/40 px-5 py-2 text-sm font-medium text-cream backdrop-blur-md">
+              {memberName(t, photos[active].institution)}
+            </p>
+          )}
           <img
             src={photos[active].src}
             alt={photos[active].original_filename || t.life.alts[active % t.life.alts.length]}

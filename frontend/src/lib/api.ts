@@ -46,9 +46,10 @@ export const apiPatch = <T>(path: string, body?: JsonBody) =>
 export const apiDelete = <T>(path: string) => request<T>("DELETE", path);
 
 // Multipart upload: browser sets the multipart boundary, so no Content-Type header here.
-export async function apiUpload<T>(path: string, file: File): Promise<T> {
+export async function apiUpload<T>(path: string, file: File, fields: Record<string, string> = {}): Promise<T> {
   const form = new FormData();
   form.append("file", file);
+  Object.entries(fields).forEach(([k, v]) => form.append(k, v));
   const res = await fetch(`${BASE}${path}`, { method: "POST", body: form });
   if (!res.ok) {
     const errBody = await res.json().catch(() => null);

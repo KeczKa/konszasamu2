@@ -7,11 +7,12 @@ from pathlib import PurePosixPath
 from typing import List, Optional
 
 import httpx
-from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, EmailStr, Field
 
 from lib.db import db
+from lib.institutions import DEFAULT_INSTITUTION, InstitutionSlug
 from lib.security import get_current_user, permissions_for, require
 from lib.storage import STORAGE_DIR, get_object, put_object
 
@@ -61,7 +62,12 @@ class GalleryPhoto(BaseModel):
     id: str
     src: str
     original_filename: str
+    institution: str
     created_at: datetime
+
+
+class GalleryInstitutionUpdate(BaseModel):
+    institution: InstitutionSlug
 
 
 def user_out(doc: dict) -> UserOut:
@@ -83,6 +89,7 @@ def photo_out(doc: dict) -> GalleryPhoto:
         id=doc["id"],
         src=src,
         original_filename=doc.get("original_filename", ""),
+        institution=doc.get("institution", DEFAULT_INSTITUTION),
         created_at=created,
     )
 
@@ -240,6 +247,7 @@ async def list_gallery():
 @router.post("/gallery", response_model=GalleryPhoto, status_code=201)
 async def upload_gallery_photo(
     file: UploadFile = File(...),
+    institution: InstitutionSlug = Form(...),
     user: dict = Depends(require("gallery")),
 ):
     content_type = (file.content_type or "").lower()
@@ -279,6 +287,7 @@ async def upload_gallery_photo(
         "original_filename": file.filename or "photo",
         "content_type": content_type,
         "size": result.get("size", len(data)),
+        "institution": institution,
         "is_deleted": False,
         "created_at": datetime.now(timezone.utc),
     }
@@ -337,6 +346,21 @@ async def gallery_image(photo_id: str):
         media_type=doc.get("content_type", "application/octet-stream"),
         headers={"Cache-Control": "public, max-age=86400"},
     )
+
+
+@router.patch("/gallery/{photo_id}", response_model=GalleryPhoto)
+async def update_gallery_photo(
+    photo_id: str,
+    body: GalleryInstitutionUpdate,
+    user: dict = Depends(require("gallery")),
+):
+    result = await db.gallery_photos.update_one(
+        {"id": photo_id, "is_deleted": False},
+        {"$set": {"institution": body.institution}},
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Photo not found")
+    return photo_out(await db.gallery_photos.find_one({"id": photo_id}))
 
 
 @router.delete("/gallery/{photo_id}", status_code=204)

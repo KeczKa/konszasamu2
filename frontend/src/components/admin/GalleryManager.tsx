@@ -3,34 +3,40 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLang } from "@/lib/i18n";
-import { apiDelete, apiGet, apiUpload } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiUpload } from "@/lib/api";
 import type { GalleryPhoto } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { InstitutionSelect } from "@/components/admin/InstitutionSelect";
 
 export function GalleryManager() {
   const { t } = useLang();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [institution, setInstitution] = useState("");
 
   const photos = useQuery({ queryKey: ["gallery"], queryFn: () => apiGet<GalleryPhoto[]>("/gallery") });
+  const refresh = () => queryClient.invalidateQueries({ queryKey: ["gallery"] });
 
   const remove = useMutation({
     mutationFn: (id: string) => apiDelete(`/gallery/${id}`),
-    onSuccess: () => {
-      toast.success(t.admin.photoDeleted);
-      queryClient.invalidateQueries({ queryKey: ["gallery"] });
-    },
+    onSuccess: () => { toast.success(t.admin.photoDeleted); refresh(); },
+  });
+
+  const retag = useMutation({
+    mutationFn: ({ id, slug }: { id: string; slug: string }) => apiPatch(`/gallery/${id}`, { institution: slug }),
+    onSuccess: () => { toast.success(t.admin.institutionUpdated); refresh(); },
   });
 
   const onFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0 || !institution) return;
     setUploading(true);
     try {
       for (const file of Array.from(files)) {
-        await apiUpload("/gallery", file);
+        await apiUpload("/gallery", file, { institution });
       }
-      queryClient.invalidateQueries({ queryKey: ["gallery"] });
+      refresh();
     } catch {
       toast.error(t.admin.uploadError);
     } finally {
@@ -41,9 +47,13 @@ export function GalleryManager() {
 
   return (
     <div className="mt-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="max-w-md text-sm text-stone-500">{t.admin.galleryHelp}</p>
-        <div>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <p className="max-w-md text-sm text-stone-500">{t.admin.galleryHelp} {t.admin.galleryChooseFirst}</p>
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="w-64 space-y-2">
+            <Label htmlFor="gallery-institution">{t.admin.institution} *</Label>
+            <InstitutionSelect id="gallery-institution" testId="gallery-institution-select" value={institution} onChange={setInstitution} />
+          </div>
           <input
             ref={fileRef}
             type="file"
@@ -55,7 +65,7 @@ export function GalleryManager() {
           />
           <Button
             onClick={() => fileRef.current?.click()}
-            disabled={uploading}
+            disabled={uploading || !institution}
             data-testid="gallery-upload-button"
             className="rounded-full bg-clay text-clay-foreground hover:bg-clay/90"
           >
@@ -77,6 +87,14 @@ export function GalleryManager() {
             >
               <Trash2 className="h-4 w-4" />
             </button>
+            <div className="p-2">
+              <InstitutionSelect
+                testId={`gallery-photo-institution-select-${p.id}`}
+                value={p.institution}
+                onChange={(slug) => retag.mutate({ id: p.id, slug })}
+                className="h-8 text-xs"
+              />
+            </div>
           </div>
         ))}
       </div>

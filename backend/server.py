@@ -18,6 +18,8 @@ load_dotenv(ROOT_DIR / ".env")
 from lib.db import client, db, ensure_indexes
 from lib.security import create_access_token, get_current_user, hash_password, permissions_for, require, verify_password
 from routers.admin_ext import router as admin_ext_router
+from routers.content import router as content_router
+from lib.institutions import DEFAULT_INSTITUTION, InstitutionSlug
 from lib.storage import put_object
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -50,10 +52,17 @@ async def seed_admin() -> None:
             await db.users.update_one({"email": email}, {"$set": {"role": "admin"}})
 
 
+async def assign_default_institution() -> None:
+    missing = {"institution": {"$exists": False}}
+    await db.posts.update_many(missing, {"$set": {"institution": DEFAULT_INSTITUTION}, "$unset": {"category": ""}})
+    await db.gallery_photos.update_many(missing, {"$set": {"institution": DEFAULT_INSTITUTION}})
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.index_task = __import__("asyncio").create_task(ensure_indexes())
     await seed_admin()
+    await assign_default_institution()
     yield
     client.close()
 
@@ -61,6 +70,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 api_router = APIRouter(prefix="/api")
 api_router.include_router(admin_ext_router)
+api_router.include_router(content_router)
 
 
 # ---------- Models ----------
@@ -83,7 +93,7 @@ class PostIn(BaseModel):
     title_hu: str = Field(min_length=1)
     content_ro: str = Field(min_length=1)
     content_hu: str = Field(min_length=1)
-    category: str = "announcement"
+    institution: InstitutionSlug
     cover_image: str = ""
 
 
@@ -108,6 +118,8 @@ class ContactMessage(ContactIn):
 
 def post_from_doc(doc: dict) -> Post:
     doc.pop("_id", None)
+    doc.pop("category", None)
+    doc.setdefault("institution", DEFAULT_INSTITUTION)
     doc["created_at"] = aware(doc["created_at"])
     doc["updated_at"] = aware(doc["updated_at"])
     return Post(**doc)
@@ -162,8 +174,9 @@ async def me(user: dict = Depends(get_current_user)):
 # ---------- News routes ----------
 
 @api_router.get("/news", response_model=List[Post])
-async def list_posts():
-    docs = await db.posts.find().sort("created_at", -1).to_list(500)
+async def list_posts(institution: Optional[InstitutionSlug] = None):
+    query = {"institution": institution} if institution else {}
+    docs = await db.posts.find(query).sort("created_at", -1).to_list(500)
     return [post_from_doc(d) for d in docs]
 
 

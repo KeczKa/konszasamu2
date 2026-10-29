@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import AboutHistory from "@/pages/AboutHistory";
 import NewsList from "@/pages/NewsList";
 import MemberInstitution from "@/pages/MemberInstitution";
+import Documents from "@/pages/Documents";
 import NewsDetail from "@/pages/NewsDetail";
 import Contact from "@/pages/Contact";
 import AdminLogin from "@/pages/AdminLogin";
@@ -44,6 +45,7 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/despre" element={<AboutHistory />} />
       <Route path="/tagintezmenyek/:slug" element={<MemberInstitution />} />
+      <Route path="/kozlemenyek" element={<Documents />} />
       <Route path="/noutati" element={<NewsList />} />
       <Route path="/noutati/:id" element={<NewsDetail />} />
       <Route path="/contact" element={<Contact />} />
