@@ -71,7 +71,7 @@ export default function NewsList() {
               )}
               <div className="flex flex-col justify-center p-8 sm:p-12">
                 <span className="w-fit rounded-full bg-clay/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-clay">
-                  {t.newsPage.featuredBadge}
+                  {t.newsPage.featuredBadge} · {memberName(t, featured.institution)}
                 </span>
                 <h2 className="mt-5 font-heading text-2xl font-semibold leading-tight text-ink transition-colors duration-200 group-hover:text-clay sm:text-3xl">
                   {pick(lang, featured, "title")}

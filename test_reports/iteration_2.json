@@ -1,0 +1,29 @@
+{
+  "summary": "Full backend and frontend test of member institutions, news tagged by institution, the Közlemények PDF documents and gallery institution tagging. Backend: 16/16 pytest tests pass against the public URL. Covered: news without an institution or with a bad slug -> 422; ?institution filter; PUT keeps institution; 6 institutions, nagybaconi-iskola first; institution PUT is 401 without login, 400 for an external image URL, and persists; documents: 401 without login, 403 for editor (temporary editor inserted in mongo, then removed), 415 for non-PDF, 422 without title, upload -> list -> file served as application/pdf from /app/uploads/konszasamu/documents/ -> delete -> 404; gallery: 422 without institution, upload/PATCH/delete work, PATCH bad slug -> 422, PATCH without login -> 401. Frontend (1920 and 390): header has the 6 Tagintézmények items with nagybaconi-iskola first, plus nav-kozlemenyek, on desktop and mobile; /noutati title is Hírek (RO Noutăți), with the all filter + 6 institution filters, filtering matches API counts, cards show the institution name; new post form blocks saving without an institution (native required); a post tagged kisbaconi-ovoda appears on /noutati, under its filter, and on /tagintezmenyek/kisbaconi-ovoda member-news, but not on ajtai-ovoda; delete works. Admin Tagintézmények tab loads per-institution data, edits, uploads images, saves; the public page shows hero image, description and contacts, and RO shows the RO description. Admin documents tab uploads, row appears on /kozlemenyek, link opens /api/documents/<id>/file in a new tab, delete works. Gallery upload button is disabled until an institution is chosen; per-photo select PATCHes; home overlay and lightbox show the institution name. News detail badge links to the institution page. No horizontal overflow at 390px. No page errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/noutati featured card (news-featured)", "issues": ["Featured post shows only the 'FŐ HÍR' badge, not the institution name, unlike the other cards"]},
+      {"screen": "/kozlemenyek", "issues": ["Small PDFs show size '0.0 MB'; show KB for files under 1 MB", "At <640px the 'PDF megnyitása' label is hidden (sm:flex). The whole row is still a link but has no visible affordance; consider an icon on mobile"]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_institutions_documents.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Optional: show the institution name on the featured news card",
+    "Optional: show document size in KB when under 1 MB; add a visible open icon on mobile document rows"
+  ],
+  "critical_code_review_comments": [
+    "InstitutionsManager uploads images via /api/news/cover-image (stored under articles/, needs the 'posts' permission). Removed or unsaved images become orphan files. Consider a dedicated konszasamu/institutions/ upload endpoint guarded by 'institutions'.",
+    "Gallery delete is a soft delete only (is_deleted=True); files stay on disk.",
+    "InstitutionIn.email is a plain str (no EmailStr validation).",
+    "backend/tests/conftest.py imports pytest_asyncio, which is not installed; run the tests with --noconftest or install pytest-asyncio."
+  ],
+  "updated_files": ["/app/backend/tests/test_institutions_documents.py"],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "100%"},
+  "seed_data_creation": "None persisted. Test posts, documents, gallery photos and the editor user were deleted; kisbaconi-iskola institution reset to empty. One orphan 1x1 PNG remains in the articles/ storage.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Run: cd /app/backend && python -m pytest tests/test_institutions_documents.py --noconftest -q. Admin admin@konszasamu.ro / Preview-Admin-2026 (from backend/.env; /app/memory/test_credentials.md is missing). Selects are native <select> (use select_option). Admin tab keys: posts, messages, gallery, institutions, documents, users. Delete buttons for posts use confirm dialogs."
+}

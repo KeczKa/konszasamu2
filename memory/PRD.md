@@ -1,9 +1,17 @@
 # Konsza Samu school website – PRD
-## Original request (improvements)
-1. "Kapcsolat" only as header right button. 2. Footer: remove Hírek/Iskolánkról/Kapcsolat links; contact info right; "Tanári portál" middle, bigger. 3. New menu "Tagintézmények" with submenus Ajtai Iskola, Kisbaconi Iskola, Kisbaconi Óvoda, Nagybaconi Óvoda, Ajtai Óvoda (title-only pages, fixed text). 4–6. Remove marquee strip, "Kik vagyunk" section, "Szeretnél megismerni minket?" band.
 ## Stack
-Vite React TS frontend (/app/frontend), FastAPI + MongoDB backend. RO/HU i18n in src/lib/i18n.tsx.
-## Implemented (Jun 2026)
-- All 6 items done; member pages at /tagintezmenyek/:slug (MemberInstitution.tsx); added "start" script for supervisor. Tested 100%.
+Vite React TS frontend (/app/frontend), FastAPI + MongoDB backend (/app/backend). RO/HU i18n in src/lib/i18n.tsx. Self-hosted on k8s (deploy/k8s.yaml); uploads on PVC at PHOTO_STORAGE_DIR=/app/uploads.
+
+## Iteration 1 (done)
+Kapcsolat only in header right; footer reorganised (Tanári portál centre, contact info right); Tagintézmények dropdown; marquee, "Kik vagyunk", "Szeretnél megismerni minket?" removed.
+
+## Iteration 2 (done, Jun 2026) – tested 100% (iteration_2.json)
+- Tagintézmények: + Nagybaconi Iskola (6 total). Pages show images, description (HU/RO), address/phone/email, editable in admin tab "Tagintézmények" (admin+editor); and list that institution's news.
+- News: required institution (replaces old categories); /noutati filters by institution; titles "Hírek"/"Noutăți". Existing news/photos auto-assigned to nagybaconi-iskola at startup.
+- Közlemények és határozatok (/kozlemenyek): public PDF list; admin-only upload/delete; stored in konszasamu/documents/ on the same volume.
+- Gallery: institution required on upload, changeable per photo; institution name overlay on public gallery + lightbox.
+- Preview-only backend/.env created (local Mongo, preview admin) – production uses k8s secret.
+
 ## Backlog
-- Content for member institution pages (photos, description, contacts)
+- P1: Filter gallery by institution / show institution gallery on member page
+- P2: Document categories (közlemény vs határozat), search

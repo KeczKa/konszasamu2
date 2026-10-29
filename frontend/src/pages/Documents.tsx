@@ -44,11 +44,11 @@ export default function Documents() {
                     {pick(lang, d, "title")}
                   </span>
                   <span className="mt-1 block font-mono text-xs text-stone-500">
-                    {format(new Date(d.created_at), "yyyy.MM.dd")} · PDF · {(d.size / 1024 / 1024).toFixed(1)} MB
+                    {format(new Date(d.created_at), "yyyy.MM.dd")} · PDF · {d.size < 1024 * 1024 ? `${Math.max(1, Math.round(d.size / 1024))} KB` : `${(d.size / 1024 / 1024).toFixed(1)} MB`}
                   </span>
                 </span>
-                <span className="hidden items-center gap-1.5 text-sm font-semibold text-clay sm:flex">
-                  {t.docsPage.open} <ExternalLink className="h-4 w-4" />
+                <span className="flex items-center gap-1.5 text-sm font-semibold text-clay">
+                  <span className="hidden sm:inline">{t.docsPage.open}</span> <ExternalLink className="h-4 w-4" />
                 </span>
               </a>
             </li>
