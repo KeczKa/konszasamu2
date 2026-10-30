@@ -21,5 +21,9 @@ Kapcsolat only in header right; footer reorganised (Tanári portál centre, cont
 - Member pages show their own gallery photos.
 - Bug fix: member page news filtered client-side by institution (robust even with an older backend). Tested (iteration_4).
 
+## Iteration 5 (done)
+- PDF types (Közlemény/Határozat), required on upload, changeable; filter on /kozlemenyek.
+- Events (/esemenyek): date+optional time, HU/RO name & description, location, institution or 'all'; admin+editor manage; click opens popup with grey backdrop; past events grey & inactive; home shows next 3 (replaced stats); member pages show own + 'all' events. Tested (iteration_5/6).
+
 ## Backlog
-- P2: Document categories (közlemény vs határozat), search
+- P2: Document search; event calendar export (iCal)
