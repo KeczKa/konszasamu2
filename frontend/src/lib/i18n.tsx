@@ -102,7 +102,7 @@ const ro = {
   events: {
     overline: "Calendar",
     title: "Evenimente",
-    intro: "Evenimentele școlii și ale structurilor arondate. Treceți cu mouse-ul peste un eveniment pentru detalii.",
+    intro: "Evenimentele școlii și ale structurilor arondate. Faceți clic pe un eveniment pentru detalii.",
     upcoming: "Evenimente viitoare",
     past: "Evenimente trecute",
     empty: "Nu există evenimente programate.",
@@ -358,7 +358,7 @@ const hu: typeof ro = {
   events: {
     overline: "Naptár",
     title: "Események",
-    intro: "Az iskola és a tagintézmények eseményei. Vidd az egeret egy esemény fölé a részletekért.",
+    intro: "Az iskola és a tagintézmények eseményei. Kattints egy eseményre a részletekért.",
     upcoming: "Közelgő események",
     past: "Elmúlt események",
     empty: "Nincs tervezett esemény.",

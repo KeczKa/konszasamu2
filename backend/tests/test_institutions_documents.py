@@ -116,17 +116,17 @@ class TestInstitutions:
 class TestDocuments:
     def test_unauth_401(self):
         r = requests.post(f"{BASE}/documents", files={"file": ("a.pdf", PDF, "application/pdf")},
-                          data={"title_ro": "a", "title_hu": "b"})
+                          data={"title_ro": "a", "title_hu": "b", "doc_type": "announcement"})
         assert r.status_code == 401
 
     def test_editor_403(self, editor):
         r = editor.post(f"{BASE}/documents", files={"file": ("a.pdf", PDF, "application/pdf")},
-                        data={"title_ro": "a", "title_hu": "b"})
+                        data={"title_ro": "a", "title_hu": "b", "doc_type": "announcement"})
         assert r.status_code == 403
 
     def test_non_pdf_415(self, admin):
         r = admin.post(f"{BASE}/documents", files={"file": ("a.png", PNG, "image/png")},
-                       data={"title_ro": "a", "title_hu": "b"})
+                       data={"title_ro": "a", "title_hu": "b", "doc_type": "announcement"})
         assert r.status_code == 415
 
     def test_missing_title_422(self, admin):
@@ -135,7 +135,7 @@ class TestDocuments:
 
     def test_upload_view_delete(self, admin):
         r = admin.post(f"{BASE}/documents", files={"file": ("TEST.pdf", PDF, "application/pdf")},
-                       data={"title_ro": "TEST_ro", "title_hu": "TEST_hu"})
+                       data={"title_ro": "TEST_ro", "title_hu": "TEST_hu", "doc_type": "announcement"})
         assert r.status_code == 201
         d = r.json()
         assert d["title_hu"] == "TEST_hu" and d["size"] == len(PDF)

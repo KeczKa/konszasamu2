@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays, MapPin, X, Building2 } from "lucide-react";
 import { useLang, pick, memberName } from "@/lib/i18n";
 import type { SchoolEvent } from "@/lib/types";
@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 
 function EventPopup({ ev, onClose }: { ev: SchoolEvent; onClose: () => void }) {
   const { lang, t } = useLang();
-  const entered = useRef(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -25,8 +24,6 @@ function EventPopup({ ev, onClose }: { ev: SchoolEvent; onClose: () => void }) {
       <div
         data-testid="event-popup-card"
         onClick={(e) => e.stopPropagation()}
-        onMouseEnter={() => { entered.current = true; }}
-        onMouseLeave={() => entered.current && onClose()}
         className="relative w-full max-w-lg animate-in fade-in zoom-in-95 rounded-3xl border border-border bg-cream p-8 text-ink shadow-[0_24px_80px_rgba(0,0,0,0.35)] duration-200"
       >
         <button
@@ -57,16 +54,9 @@ function EventPopup({ ev, onClose }: { ev: SchoolEvent; onClose: () => void }) {
 function EventRow({ ev, onOpen, compact }: { ev: SchoolEvent; onOpen: (ev: SchoolEvent) => void; compact?: boolean }) {
   const { lang } = useLang();
   const past = isPast(ev);
-  const timer = useRef<number | undefined>(undefined);
   const { day, month, year } = dayMonth(ev, lang);
 
-  const handlers = past
-    ? {}
-    : {
-        onMouseEnter: () => { timer.current = window.setTimeout(() => onOpen(ev), 250); },
-        onMouseLeave: () => window.clearTimeout(timer.current),
-        onClick: () => { window.clearTimeout(timer.current); onOpen(ev); },
-      };
+  const handlers = past ? {} : { onClick: () => onOpen(ev) };
 
   return (
     <li>

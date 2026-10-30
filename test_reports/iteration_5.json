@@ -1,0 +1,28 @@
+{
+  "summary": "Tested the events feature and document types on backend and frontend. Backend: 30/30 pytest pass, covering the new test_events_doctypes.py (14 tests) and the legacy test_institutions_documents.py, which I updated to send the now-required doc_type. Frontend: almost everything works. Header: nav-esemenyek shows at 1280, the mobile menu takes over at 1279 and 390, and there is no horizontal overflow. /esemenyek: 7 filter buttons; institution filters show that institution's events plus 'all' events; the upcoming list is ascending; the past event (Tanévnyitó) is grey and opens no popup on hover or click. The popup shows title, date, location, institution and description; it opens after 250ms of hover, on click and on Enter. X, Esc and leaving the card close it. Home: 3 upcoming events, no I–VIII/1861 stats, view-all goes to /esemenyek, hover opens the popup. Member pages are scoped correctly. Admin: created an event (all, 14:30), edited it (kisbaconi-ovoda, time cleared) and it showed up on the public pages, then deleted it. Documents: upload is blocked until a type is chosen, the per-row type select sends PATCH 200, and the /kozlemenyek filter and badges are correct. RO switch is correct throughout. One UX bug: the event popup immediately reopens when it is closed while the cursor is over an upcoming row.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "EventList / EventPopup", "issue": "The popup reopens about 250ms after closing with Esc or a backdrop click if the cursor is over an upcoming event row. A hover-opened popup usually leaves the cursor over the row, so a click on the backdrop just outside the card reopens it, and it can be hard to dismiss. Reproduced: hover Mikulás row, wait, press Esc: 0 popups at +60ms, 1 again at +660ms. Backdrop click over the Karácsonyi row: popup reopens. A popup also opens on its own when a page loads or scrolls and a row lands under a resting cursor. RCA: when the overlay unmounts, the browser fires mouseenter on the row now under the cursor, which starts the 250ms open timer again. Fix: in EventList, keep a 'suppress until real mouseleave' flag (or about a 400ms cooldown) after onClose. Also only arm the timer on a real mousemove over the row, not on mouseenter caused by layout or scroll.", "selector": "[data-testid^=event-row-], [data-testid=event-popup]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_events_doctypes.py", "/app/backend/tests/test_institutions_documents.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix the event popup reopening after Esc or backdrop close while the cursor is over a row (EventList.tsx): ignore the row mouseenter that follows a close, until a real mouseleave or mousemove."
+  ],
+  "critical_code_review_comments": [
+    "EventsManager: delete has no confirm dialog, while DocumentsManager asks for confirmation. A misclick removes an event right away. The remove mutation has no onError toast.",
+    "EventsManager: save onError shows the generic contact error text, not the backend 422 detail (for example 'Invalid date or time').",
+    "Past/upcoming is decided by the client's local date, while the backend has no notion of it. Fine for a Romania-only audience.",
+    "GET /api/events has no limit or pagination, and old events accumulate. Consider keeping only the recent past events on the public pages over time."
+  ],
+  "updated_files": ["/app/backend/tests/test_events_doctypes.py (new)", "/app/backend/tests/test_institutions_documents.py (added doc_type to upload payloads; the old tests broke because doc_type is now required)"],
+  "success_rate": {"backend": "100%", "frontend": "95%"},
+  "test_credentials": "admin@konszasamu.ro / Preview-Admin-2026 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Temporary TEST events and TEST documents were created via API and UI, then deleted. The DB is back to 4 seeded events and 1 document (announcement). The temporary editor users created by the pytest fixtures are deleted on teardown.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Server date is 2026-10-30. Event IDs: Szülői 798ec223, Mikulás e053c87a, Karácsonyi bece7097, Tanévnyitó a8c6f703 (past). Document 3c918a10 is an announcement. The pytest.ini uses xdist with --dist loadscope, which splits by class, so module-scoped fixtures run once per worker; use unique emails for seeded users. In Playwright, park the mouse (page.mouse.move(1900,5)) before goto or scroll, because hovering a row auto-opens the popup and blocks later clicks. To open the popup deterministically use focus + Enter. The admin document upload button stays disabled until a doc type is selected."
+}
