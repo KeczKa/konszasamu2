@@ -7,9 +7,10 @@ interface Props {
   testId: string;
   id?: string;
   className?: string;
+  allowAll?: boolean;
 }
 
-export function InstitutionSelect({ value, onChange, testId, id, className }: Props) {
+export function InstitutionSelect({ value, onChange, testId, id, className, allowAll }: Props) {
   const { t } = useLang();
   return (
     <select
@@ -24,6 +25,7 @@ export function InstitutionSelect({ value, onChange, testId, id, className }: Pr
       )}
     >
       <option value="" disabled>{t.admin.chooseInstitution}</option>
+      {allowAll && <option value="all">{t.events.allInstitutions}</option>}
       {t.members.map((m) => (
         <option key={m.slug} value={m.slug}>{m.name}</option>
       ))}

@@ -2,7 +2,7 @@
 import asyncio
 import uuid
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Literal
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile
 from pydantic import BaseModel, Field
@@ -15,6 +15,7 @@ from lib.storage import delete_object, get_object, put_object
 router = APIRouter()
 
 MAX_PDF_BYTES = 20 * 1024 * 1024
+DocType = Literal["announcement", "decision"]
 
 
 class InstitutionIn(BaseModel):
@@ -34,6 +35,7 @@ class OfficialDocument(BaseModel):
     id: str
     title_ro: str
     title_hu: str
+    doc_type: str
     original_filename: str
     size: int
     url: str
@@ -53,6 +55,7 @@ def document_out(doc: dict) -> OfficialDocument:
         id=doc["id"],
         title_ro=doc["title_ro"],
         title_hu=doc["title_hu"],
+        doc_type=doc.get("doc_type", "announcement"),
         original_filename=doc.get("original_filename", "document.pdf"),
         size=doc.get("size", 0),
         url=f"/api/documents/{doc['id']}/file",
@@ -99,6 +102,7 @@ async def upload_document(
     file: UploadFile = File(...),
     title_ro: str = Form(..., min_length=1, max_length=300),
     title_hu: str = Form(..., min_length=1, max_length=300),
+    doc_type: DocType = Form(...),
     user: dict = Depends(require("documents")),
 ):
     data = await file.read(MAX_PDF_BYTES + 1)
@@ -114,6 +118,7 @@ async def upload_document(
         "id": doc_id,
         "title_ro": title_ro.strip(),
         "title_hu": title_hu.strip(),
+        "doc_type": doc_type,
         "storage_path": path,
         "original_filename": file.filename or "document.pdf",
         "size": len(data),
@@ -137,6 +142,18 @@ async def document_file(doc_id: str):
         media_type="application/pdf",
         headers={"Content-Disposition": f'inline; filename="{doc_id}.pdf"', "Cache-Control": "public, max-age=3600"},
     )
+
+
+class DocTypeUpdate(BaseModel):
+    doc_type: DocType
+
+
+@router.patch("/documents/{doc_id}", response_model=OfficialDocument)
+async def update_document_type(doc_id: str, body: DocTypeUpdate, user: dict = Depends(require("documents"))):
+    doc = await db.documents.find_one_and_update({"id": doc_id}, {"$set": {"doc_type": body.doc_type}}, return_document=True)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return document_out(doc)
 
 
 @router.delete("/documents/{doc_id}", status_code=204)

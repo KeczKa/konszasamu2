@@ -13,6 +13,7 @@ import { GalleryManager } from "@/components/admin/GalleryManager";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { InstitutionsManager } from "@/components/admin/InstitutionsManager";
 import { DocumentsManager } from "@/components/admin/DocumentsManager";
+import { EventsManager } from "@/components/admin/EventsManager";
 import { InstitutionSelect } from "@/components/admin/InstitutionSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,6 +109,7 @@ export default function AdminDashboard() {
     { key: "posts", label: t.admin.tabPosts },
     { key: "messages", label: t.admin.tabMessages },
     { key: "gallery", label: t.admin.tabGallery },
+    { key: "events", label: t.admin.tabEvents },
     { key: "institutions", label: t.admin.tabInstitutions },
     { key: "documents", label: t.admin.tabDocuments },
     { key: "users", label: t.admin.tabUsers },
@@ -337,6 +339,8 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "gallery" && <GalleryManager />}
+
+        {activeTab === "events" && <EventsManager />}
 
         {activeTab === "institutions" && <InstitutionsManager />}
 

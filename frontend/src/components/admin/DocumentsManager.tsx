@@ -4,8 +4,9 @@ import { FileText, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useLang } from "@/lib/i18n";
-import { apiDelete, apiGet, apiUpload } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiUpload } from "@/lib/api";
 import type { OfficialDocument } from "@/lib/types";
+import { DOC_TYPES } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,20 +18,40 @@ export function DocumentsManager() {
   const [titleRo, setTitleRo] = useState("");
   const [titleHu, setTitleHu] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [docType, setDocType] = useState("");
 
   const docs = useQuery({ queryKey: ["documents"], queryFn: () => apiGet<OfficialDocument[]>("/documents") });
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["documents"] });
 
   const upload = useMutation({
-    mutationFn: () => apiUpload<OfficialDocument>("/documents", file as File, { title_ro: titleRo, title_hu: titleHu }),
+    mutationFn: () => apiUpload<OfficialDocument>("/documents", file as File, { title_ro: titleRo, title_hu: titleHu, doc_type: docType }),
     onSuccess: () => {
       toast.success(t.admin.docUploaded);
-      setTitleRo(""); setTitleHu(""); setFile(null);
+      setTitleRo(""); setTitleHu(""); setFile(null); setDocType("");
       if (fileRef.current) fileRef.current.value = "";
       refresh();
     },
     onError: () => toast.error(t.admin.docError),
   });
+
+  const retype = useMutation({
+    mutationFn: ({ id, value }: { id: string; value: string }) => apiPatch(`/documents/${id}`, { doc_type: value }),
+    onSuccess: () => { toast.success(t.admin.docTypeUpdated); refresh(); },
+  });
+
+  const typeSelect = (value: string, onChange: (v: string) => void, testId: string, id?: string) => (
+    <select
+      id={id}
+      required
+      data-testid={testId}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="border-input bg-background flex h-9 w-full rounded-md border px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+    >
+      <option value="" disabled>{t.admin.chooseDocType}</option>
+      {DOC_TYPES.map((k) => <option key={k} value={k}>{t.docsPage.types[k]}</option>)}
+    </select>
+  );
 
   const remove = useMutation({
     mutationFn: (id: string) => apiDelete(`/documents/${id}`),
@@ -63,11 +84,15 @@ export function DocumentsManager() {
             <Input id="doc-title-hu" data-testid="document-title-hu-input" value={titleHu} onChange={(e) => setTitleHu(e.target.value)} required />
           </div>
         </div>
+        <div className="max-w-xs space-y-2">
+          <Label htmlFor="doc-type">{t.admin.docType} *</Label>
+          {typeSelect(docType, setDocType, "document-type-select", "doc-type")}
+        </div>
         <div className="max-w-md space-y-2">
           <Label htmlFor="doc-file">{t.admin.docFile}</Label>
           <Input id="doc-file" ref={fileRef} type="file" accept="application/pdf" required data-testid="document-file-input" onChange={(e) => pickFile(e.target.files?.[0])} />
         </div>
-        <Button type="submit" disabled={upload.isPending || !file} data-testid="document-upload-button" className="rounded-full bg-clay text-clay-foreground hover:bg-clay/90">
+        <Button type="submit" disabled={upload.isPending || !file || !docType} data-testid="document-upload-button" className="rounded-full bg-clay text-clay-foreground hover:bg-clay/90">
           <Upload className="mr-1 h-4 w-4" /> {upload.isPending ? t.admin.uploading : t.admin.docUpload}
         </Button>
       </form>
@@ -83,9 +108,12 @@ export function DocumentsManager() {
                 <span className="block text-xs text-stone-500">{d.title_ro} • {format(new Date(d.created_at), "yyyy-MM-dd")}</span>
               </span>
             </a>
+            <div className="flex items-center gap-2">
+            <div className="w-36">{typeSelect(d.doc_type, (v) => retype.mutate({ id: d.id, value: v }), `admin-document-type-${d.id}`)}</div>
             <Button variant="outline" size="sm" onClick={() => remove.mutate(d.id)} data-testid={`admin-document-delete-${d.id}`} className="rounded-full border-destructive/30 text-destructive hover:bg-destructive/10">
               <Trash2 className="mr-1 h-3.5 w-3.5" /> {t.admin.delete}
             </Button>
+            </div>
           </div>
         ))}
       </div>

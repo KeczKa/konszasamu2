@@ -22,6 +22,7 @@ export function HeaderNav() {
     { to: "/", label: t.nav.home },
     { to: "/despre", label: t.nav.about },
     { to: "/noutati", label: t.nav.news },
+    { to: "/esemenyek", label: t.nav.events },
     { to: "/kozlemenyek", label: t.nav.documents },
   ];
 
@@ -97,7 +98,7 @@ export function HeaderNav() {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-6" aria-label="main">
+          <nav className="hidden xl:flex items-center gap-6" aria-label="main">
             {links.map((l, i) => (
               <Fragment key={l.to}>
                 <NavLink to={l.to} data-testid={`nav-${testId(l.to)}`} className={({ isActive }) => navCls(isActive)}>
@@ -122,7 +123,7 @@ export function HeaderNav() {
             </Link>
             <button
               data-testid="mobile-menu-button"
-              className="lg:hidden p-1.5 text-ink cursor-pointer"
+              className="xl:hidden p-1.5 text-ink cursor-pointer"
               onClick={() => setOpen(!open)}
               aria-label="menu"
             >
@@ -132,7 +133,7 @@ export function HeaderNav() {
         </div>
 
         {open && (
-          <nav data-testid="mobile-menu" className="lg:hidden pb-4 flex flex-col gap-1" aria-label="mobile">
+          <nav data-testid="mobile-menu" className="xl:hidden pb-4 flex flex-col gap-1" aria-label="mobile">
             {links.map((l, i) => (
               <Fragment key={l.to}>
                 <NavLink

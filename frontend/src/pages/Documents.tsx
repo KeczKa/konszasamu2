@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { useLang, pick } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
 import type { OfficialDocument } from "@/lib/types";
+import { DOC_TYPES } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { Reveal } from "@/components/Reveal";
@@ -11,6 +14,8 @@ import { Reveal } from "@/components/Reveal";
 export default function Documents() {
   const { lang, t } = useLang();
   const docs = useQuery({ queryKey: ["documents"], queryFn: () => apiGet<OfficialDocument[]>("/documents"), retry: 1 });
+  const [filter, setFilter] = useState("all");
+  const visible = (docs.data ?? []).filter((d) => filter === "all" || d.doc_type === filter);
 
   return (
     <div data-testid="documents-page" className="min-h-screen bg-cream text-ink">
@@ -22,12 +27,29 @@ export default function Documents() {
           <p className="mt-4 max-w-xl text-base leading-relaxed text-stone-600">{t.docsPage.intro}</p>
         </Reveal>
 
-        {docs.data && docs.data.length === 0 && (
-          <p data-testid="documents-empty" className="mt-12 text-sm text-stone-500">{t.docsPage.empty}</p>
+        <div data-testid="documents-filters" className="mt-10 flex flex-wrap gap-2">
+          {["all", ...DOC_TYPES].map((k) => (
+            <button
+              key={k}
+              data-testid={`documents-filter-${k}`}
+              aria-pressed={filter === k}
+              onClick={() => setFilter(k)}
+              className={cn(
+                "cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200",
+                filter === k ? "border-clay bg-clay text-clay-foreground" : "border-border bg-white text-stone-700 hover:border-clay hover:text-clay"
+              )}
+            >
+              {k === "all" ? t.docsPage.filterAll : t.docsPage.typesPlural[k]}
+            </button>
+          ))}
+        </div>
+
+        {docs.data && visible.length === 0 && (
+          <p data-testid="documents-empty" className="mt-10 text-sm text-stone-500">{docs.data.length === 0 ? t.docsPage.empty : t.docsPage.emptyFiltered}</p>
         )}
 
-        <ul className="mt-12 divide-y divide-border border-y border-border">
-          {(docs.data ?? []).map((d) => (
+        <ul className="mt-8 divide-y divide-border border-y border-border">
+          {visible.map((d) => (
             <li key={d.id} data-testid={`document-row-${d.id}`}>
               <a
                 href={d.url}
@@ -40,6 +62,9 @@ export default function Documents() {
                   <FileText className="h-5 w-5" />
                 </span>
                 <span className="min-w-0 flex-1">
+                  <span data-testid={`document-type-${d.id}`} className="mb-1 inline-block rounded-full bg-sand px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-clay">
+                    {t.docsPage.types[d.doc_type]}
+                  </span>
                   <span className="block font-heading text-lg font-semibold leading-snug text-ink transition-colors duration-200 group-hover:text-clay">
                     {pick(lang, d, "title")}
                   </span>

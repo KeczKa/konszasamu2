@@ -6,7 +6,9 @@ import { format } from "date-fns";
 import { ro as roLocale, hu as huLocale } from "date-fns/locale";
 import { useLang, pick } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
-import type { Post } from "@/lib/types";
+import type { Post, SchoolEvent } from "@/lib/types";
+import { splitEvents } from "@/lib/events";
+import { EventList } from "@/components/EventList";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { MaskedLine, Reveal, FadeIn } from "@/components/Reveal";
@@ -22,6 +24,8 @@ export default function Home() {
   const parallaxY = useTransform(scrollY, [0, 700], [0, 90]);
   const posts = useQuery({ queryKey: ["posts"], queryFn: () => apiGet<Post[]>("/news"), retry: 1 });
   const latest = (posts.data ?? []).slice(0, 3);
+  const events = useQuery({ queryKey: ["events"], queryFn: () => apiGet<SchoolEvent[]>("/events"), retry: 1 });
+  const nextEvents = splitEvents(events.data ?? []).upcoming.slice(0, 3);
 
   return (
     <div data-testid="home-page" className="min-h-screen bg-cream text-ink">
@@ -55,13 +59,16 @@ export default function Home() {
                   {t.hero.ctaPrimary} <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </div>
-              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-border pt-8">
-                {t.hero.stats.map((s) => (
-                  <div key={s.label}>
-                    <p className="font-heading text-2xl font-semibold text-clay sm:text-3xl">{s.value}</p>
-                    <p className="mt-1 text-xs leading-snug text-stone-500 sm:text-sm">{s.label}</p>
-                  </div>
-                ))}
+              <div data-testid="home-events" className="mt-12 border-t border-border pt-8">
+                <div className="flex items-center justify-between gap-4">
+                  <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-clay">{t.events.homeTitle}</h2>
+                  <Link to="/esemenyek" data-testid="home-events-view-all" className="group flex items-center gap-1.5 text-sm font-semibold text-clay">
+                    {t.events.viewAll}
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </Link>
+                </div>
+                {events.data && nextEvents.length === 0 && <p data-testid="home-events-empty" className="mt-4 text-sm text-stone-500">{t.events.empty}</p>}
+                <div className="mt-4"><EventList events={nextEvents} compact testId="home-events-list" /></div>
               </div>
             </FadeIn>
           </div>

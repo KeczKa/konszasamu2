@@ -58,6 +58,7 @@ export interface OfficialDocument {
   id: string;
   title_ro: string;
   title_hu: string;
+  doc_type: string;
   original_filename: string;
   size: number;
   url: string;
@@ -65,3 +66,17 @@ export interface OfficialDocument {
 }
 
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+export const DOC_TYPES = ["announcement", "decision"] as const;
+
+export interface SchoolEvent {
+  id: string;
+  date: string;
+  time: string;
+  title_ro: string;
+  title_hu: string;
+  description_ro: string;
+  description_hu: string;
+  location: string;
+  institution: string;
+}

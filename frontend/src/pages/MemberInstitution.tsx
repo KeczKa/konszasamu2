@@ -3,7 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useLang, pick } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
-import type { Institution, Post } from "@/lib/types";
+import type { Institution, Post, SchoolEvent } from "@/lib/types";
+import { splitEvents } from "@/lib/events";
+import { EventList } from "@/components/EventList";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { NewsCard } from "@/components/NewsCard";
@@ -43,6 +45,8 @@ export default function MemberInstitution() {
   const info = useQuery({ queryKey: ["institution", slug], queryFn: () => apiGet<Institution>(`/institutions/${slug}`), enabled: !!member });
   const news = useQuery({ queryKey: ["posts"], queryFn: () => apiGet<Post[]>("/news"), enabled: !!member });
   const ownNews = (news.data ?? []).filter((p) => p.institution === slug);
+  const events = useQuery({ queryKey: ["events"], queryFn: () => apiGet<SchoolEvent[]>("/events"), enabled: !!member });
+  const { upcoming, past } = splitEvents((events.data ?? []).filter((e) => e.institution === slug || e.institution === "all"));
   if (!member) return <Navigate to="/" replace />;
 
   const data = info.data;
@@ -92,6 +96,20 @@ export default function MemberInstitution() {
             </div>
           </div>
         )}
+      </section>
+
+      <section data-testid="member-events" className="border-t border-border">
+        <div className="mx-auto max-w-5xl px-5 py-16 sm:px-8">
+          <h2 className="font-heading text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{t.events.title}</h2>
+          {events.data && upcoming.length === 0 && <p data-testid="member-no-events" className="mt-6 text-sm text-stone-500">{t.events.empty}</p>}
+          <div className="mt-8"><EventList events={upcoming} testId="member-events-upcoming" /></div>
+          {past.length > 0 && (
+            <>
+              <h3 className="mt-10 font-heading text-xl font-semibold text-stone-400">{t.events.past}</h3>
+              <div className="mt-5"><EventList events={past.slice(0, 5)} testId="member-events-past" /></div>
+            </>
+          )}
+        </div>
       </section>
 
       <div className="border-t border-border">

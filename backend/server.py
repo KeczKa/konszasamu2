@@ -19,6 +19,7 @@ from lib.db import client, db, ensure_indexes
 from lib.security import create_access_token, get_current_user, hash_password, permissions_for, require, verify_password
 from routers.admin_ext import router as admin_ext_router
 from routers.content import router as content_router
+from routers.events import router as events_router
 from lib.institutions import DEFAULT_INSTITUTION, InstitutionSlug
 from lib.storage import put_object
 
@@ -56,6 +57,7 @@ async def assign_default_institution() -> None:
     missing = {"institution": {"$exists": False}}
     await db.posts.update_many(missing, {"$set": {"institution": DEFAULT_INSTITUTION}, "$unset": {"category": ""}})
     await db.gallery_photos.update_many(missing, {"$set": {"institution": DEFAULT_INSTITUTION}})
+    await db.documents.update_many({"doc_type": {"$exists": False}}, {"$set": {"doc_type": "announcement"}})
 
 
 @asynccontextmanager
@@ -71,6 +73,7 @@ app = FastAPI(lifespan=lifespan)
 api_router = APIRouter(prefix="/api")
 api_router.include_router(admin_ext_router)
 api_router.include_router(content_router)
+api_router.include_router(events_router)
 
 
 # ---------- Models ----------

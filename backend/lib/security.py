@@ -12,8 +12,8 @@ JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_MINUTES = 60 * 12
 
 ROLE_PERMISSIONS: dict[str, set[str]] = {
-    "admin": {"posts", "messages", "gallery", "users", "institutions", "documents"},
-    "editor": {"posts", "gallery", "institutions"},
+    "admin": {"posts", "messages", "gallery", "users", "institutions", "documents", "events"},
+    "editor": {"posts", "gallery", "institutions", "events"},
     "viewer": {"messages"},
 }
 
