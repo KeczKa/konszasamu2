@@ -141,7 +141,7 @@ function Lightbox({ photos, start, onClose }: { photos: GalleryPhoto[]; start: n
         {photo.institution && (
           <p
             data-testid="gallery-lightbox-institution"
-            className="absolute bottom-5 left-5 max-w-[calc(100%-7rem)] truncate rounded-full border border-white/25 bg-ink/30 px-5 py-2.5 text-sm font-medium tracking-wide text-cream backdrop-blur-md sm:text-base"
+            className="absolute bottom-5 left-5 line-clamp-2 max-w-[calc(100%-7rem)] rounded-2xl border border-white/25 bg-ink/30 px-5 py-2.5 text-sm font-medium tracking-wide text-cream backdrop-blur-md sm:text-base"
           >
             {memberName(t, photo.institution)}
           </p>
@@ -185,7 +185,18 @@ export function GallerySection({ institution }: { institution?: string }) {
     [data, filter]
   );
   const [open, setOpen] = useState<Album | null>(null);
+  const [overflows, setOverflows] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const check = () => setOverflows(el.scrollWidth > el.clientWidth + 1);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [albums]);
 
   const scrollTrack = (dir: number) => trackRef.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
   const chooseFilter = (slug: string) => {
@@ -238,8 +249,8 @@ export function GallerySection({ institution }: { institution?: string }) {
       {albums.length === 0 && <p data-testid="gallery-empty" className="mt-10 text-sm text-stone-500">{t.life.empty}</p>}
 
       <div className={cn("relative mt-8", albums.length === 0 && "hidden")}>
-        {arrow(-1)}
-        {arrow(1)}
+        {overflows && arrow(-1)}
+        {overflows && arrow(1)}
         <div ref={trackRef} data-testid="gallery-track" className="flex snap-x gap-6 overflow-x-auto px-1 pb-2 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {albums.map((a) => <AlbumCard key={a.key} album={a} onOpen={() => setOpen(a)} />)}
         </div>

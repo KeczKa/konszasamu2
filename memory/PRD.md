@@ -31,5 +31,9 @@ Kapcsolat only in header right; footer reorganised (Tanári portál centre, cont
 - Gallery: batch upload with required HU/RO caption (max 100), editable per photo; caption pill top-right on tiles & lightbox; gallery cleared, home hides empty gallery, no stock fallback; delete now removes file.
 - Hasznos linkek (/hasznos-linkek): admin-only CRUD of name/address/phone/website; starts empty. Tested (iteration_7).
 
+## Iteration 7 (done)
+- /kozlemenyek: title search (HU/RO, accent-insensitive) + year filter, combined with type filter.
+- Gallery albums: photos grouped by caption pair; album cards (count, caption, institution); lightbox with counter + thumbnails. Tested (iteration_8).
+
 ## Backlog
-- P2: Document search; event calendar export (iCal)
+- P2: Event calendar export (iCal); album cover choice

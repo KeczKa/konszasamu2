@@ -1,0 +1,26 @@
+{
+  "summary": "Frontend E2E (via admin UI uploads + public pages) of /kozlemenyek search/year filter and gallery albums + lightbox. All requested flows PASS (100%). Docs: HU/RO title search, accent+case-insensitive ('hatarozat','HATAROZAT','tanevkezdes','vacanta','hotarare'), year text '2026' search, clear button, year select (Minden év, 2026), combined with type chips, filtered-empty text HU/RO. Gallery: 3x 'Karácsony 2026' (nagybaconi-iskola) + 2x 'Farsang 2027' (ajtai-iskola) -> 2 album cards with correct count/caption/institution pills and stacked look; lightbox 1 / 3, next/prev wrap, ArrowLeft/Right, thumbs jump, caption+institution per photo, Esc/close/backdrop close, image click does not close, reopen resets to 1. Adding 'karácsony 2026 '/'CRĂCIUN 2026' (kisbaconi-iskola) merged into same album (4 kép), institution pill removed; per-photo institution shown in lightbox. Home institution chips filter before grouping (ajtai -> Farsang only; kisbaconi-iskola -> Karácsony with 1 kép + pill; kisbaconi-ovoda -> empty message). Member pages /tagintezmenyek/<slug> show only own photos grouped, no filter chips, empty message for ajtai-ovoda. RO: 'Crăciun 2026', '3 fotografii', '2 din 3', RO institution names. Mobile 390: no horizontal overflow on /kozlemenyek, home gallery, lightbox. Cleanup done: gallery empty (DB 0, files 0), only pre-existing 'Hatarozat'/'Hotarare' doc remains.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Home gallery (desktop)", "issues": ["gallery-scroll-left/right arrows are shown even when only 1-2 albums fit and the track does not overflow (purely cosmetic)."]},
+      {"screen": "Lightbox", "issues": ["Long institution names are truncated with ellipsis on narrow/portrait photos (e.g. 'Szárazajtai Ajtai Abod Mihály ...') - acceptable but could wrap/2-line clamp."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "GallerySection: album data-testid/slug is derived from HU caption only while albumKey uses HU+RO; two albums with same HU but different RO caption would render duplicate data-testid and React keys are fine but testids collide. Low impact.",
+    "GallerySection: Lightbox keydown useEffect depends only on photos.length; onClose captured from first render - fine now since setOpen is stable, but add onClose to deps for safety.",
+    "Documents: year derived from UTC created_at string; a doc uploaded around New Year local time (Romania UTC+2) may be bucketed into the previous year. Minor.",
+    "Lightbox lacks focus trap / role=dialog aria-modal; body scroll is not locked while open (minor a11y)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "100%"},
+  "seed_data_creation": "Temporarily created 3 PDFs and 6 photos via admin UI; all hard-deleted by id afterwards (gallery now empty, 1 pre-existing doc 3c918a10 untouched).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Gallery DELETE is now hard delete (find_one_and_delete + file removal). Admin login sets access_token cookie via POST /api/auth/login. Test images/PDFs were generated in /tmp/gt. In lightbox, avoid clicking backdrop near x<100 (prev button sits there); use e.g. (300,950) at 1920x1080. Pre-existing document id 3c918a10-1bfd-4e0d-9a90-0b5c64b22c4e must be preserved."
+}
