@@ -42,6 +42,8 @@ const ro = {
   },
   homeNews: { overline: "Din viața școlii", title: "Noutăți", viewAll: "Toate noutățile", empty: "În curând vom publica prima știre." },
   life: {
+    photos: "fotografii",
+    albumOf: "din",
     filterAll: "Toate", empty: "Nu există fotografii pentru această structură.",
     overline: "Galerie",
     title: "Clipe din fiecare zi",
@@ -97,7 +99,10 @@ const ro = {
     filterAll: "Toate",
     types: { announcement: "Comunicat", decision: "Hotărâre" } as Record<string, string>,
     typesPlural: { announcement: "Comunicate", decision: "Hotărâri" } as Record<string, string>,
-    emptyFiltered: "Nu există documente de acest tip.",
+    emptyFiltered: "Nu există documente care să corespundă căutării.",
+    searchPlaceholder: "Caută după titlu…",
+    allYears: "Toți anii",
+    clearSearch: "Șterge căutarea",
   },
   events: {
     overline: "Calendar",
@@ -327,6 +332,8 @@ const hu: typeof ro = {
   },
   homeNews: { overline: "Iskolai élet", title: "Hírek", viewAll: "Összes hír", empty: "Hamarosan közzétesszük az első hírt." },
   life: {
+    photos: "kép",
+    albumOf: "/",
     filterAll: "Mind", empty: "Ehhez a tagintézményhez még nincs fotó.",
     overline: "Galéria",
     title: "Pillanatok a mindennapokból",
@@ -382,7 +389,10 @@ const hu: typeof ro = {
     filterAll: "Mind",
     types: { announcement: "Közlemény", decision: "Határozat" } as Record<string, string>,
     typesPlural: { announcement: "Közlemények", decision: "Határozatok" } as Record<string, string>,
-    emptyFiltered: "Nincs ilyen típusú dokumentum.",
+    emptyFiltered: "Nincs a keresésnek megfelelő dokumentum.",
+    searchPlaceholder: "Keresés cím szerint…",
+    allYears: "Minden év",
+    clearSearch: "Keresés törlése",
   },
   events: {
     overline: "Naptár",

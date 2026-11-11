@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, ExternalLink } from "lucide-react";
+import { FileText, ExternalLink, Search, X } from "lucide-react";
 import { format } from "date-fns";
 import { useLang, pick } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
@@ -11,11 +11,23 @@ import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { Reveal } from "@/components/Reveal";
 
+const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
 export default function Documents() {
   const { lang, t } = useLang();
   const docs = useQuery({ queryKey: ["documents"], queryFn: () => apiGet<OfficialDocument[]>("/documents"), retry: 1 });
   const [filter, setFilter] = useState("all");
-  const visible = (docs.data ?? []).filter((d) => filter === "all" || d.doc_type === filter);
+  const [query, setQuery] = useState("");
+  const [year, setYear] = useState("all");
+  const all = docs.data ?? [];
+  const years = [...new Set(all.map((d) => d.created_at.slice(0, 4)))].sort().reverse();
+  const q = normalize(query.trim());
+  const visible = all.filter(
+    (d) =>
+      (filter === "all" || d.doc_type === filter) &&
+      (year === "all" || d.created_at.startsWith(year)) &&
+      (!q || normalize(`${d.title_hu} ${d.title_ro} ${d.created_at.slice(0, 4)}`).includes(q))
+  );
 
   return (
     <div data-testid="documents-page" className="min-h-screen bg-cream text-ink">
@@ -42,6 +54,41 @@ export default function Documents() {
               {k === "all" ? t.docsPage.filterAll : t.docsPage.typesPlural[k]}
             </button>
           ))}
+        </div>
+
+        <div data-testid="documents-search" className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <label className="relative flex-1">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t.docsPage.searchPlaceholder}
+              aria-label={t.docsPage.searchPlaceholder}
+              data-testid="documents-search-input"
+              className="h-11 w-full rounded-full border border-border bg-white pl-11 pr-10 text-sm outline-none transition-colors duration-200 focus:border-clay [&::-webkit-search-cancel-button]:hidden"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                aria-label={t.docsPage.clearSearch}
+                data-testid="documents-search-clear"
+                className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-stone-500 hover:bg-sand hover:text-clay"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </label>
+          <select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            aria-label={t.docsPage.allYears}
+            data-testid="documents-year-select"
+            className="h-11 cursor-pointer rounded-full border border-border bg-white px-5 text-sm outline-none focus:border-clay sm:w-44"
+          >
+            <option value="all">{t.docsPage.allYears}</option>
+            {years.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
         </div>
 
         {docs.data && visible.length === 0 && (
