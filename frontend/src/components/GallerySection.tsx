@@ -28,7 +28,7 @@ function groupAlbums(photos: GalleryPhoto[]): Album[] {
 
 function AlbumCard({ album, onOpen }: { album: Album; onOpen: () => void }) {
   const { lang, t } = useLang();
-  const cover = album.photos[0];
+  const cover = album.photos.find((p) => p.is_cover) ?? album.photos[0];
   const institutions = [...new Set(album.photos.map((p) => p.institution))];
   const caption = pick(lang, cover, "caption");
   const id = slugify(cover.caption_hu || cover.id);
@@ -256,7 +256,7 @@ export function GallerySection({ institution }: { institution?: string }) {
         </div>
       </div>
 
-      {open && <Lightbox photos={open.photos} start={0} onClose={() => setOpen(null)} />}
+      {open && <Lightbox photos={open.photos} start={Math.max(0, open.photos.findIndex((p) => p.is_cover))} onClose={() => setOpen(null)} />}
     </section>
   );
 }

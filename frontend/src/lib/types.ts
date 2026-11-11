@@ -43,6 +43,7 @@ export interface GalleryPhoto {
   institution: string;
   caption_hu: string;
   caption_ro: string;
+  is_cover: boolean;
   created_at: string;
 }
 

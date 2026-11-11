@@ -65,6 +65,7 @@ class GalleryPhoto(BaseModel):
     institution: str
     caption_hu: str
     caption_ro: str
+    is_cover: bool
     created_at: datetime
 
 
@@ -96,6 +97,7 @@ def photo_out(doc: dict) -> GalleryPhoto:
         institution=doc.get("institution", DEFAULT_INSTITUTION),
         caption_hu=doc.get("caption_hu", ""),
         caption_ro=doc.get("caption_ro", ""),
+        is_cover=bool(doc.get("is_cover", False)),
         created_at=created,
     )
 
@@ -379,6 +381,24 @@ async def update_gallery_photo(
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Photo not found")
     return photo_out(await db.gallery_photos.find_one({"id": photo_id}))
+
+
+def _album_key(doc: dict) -> tuple:
+    return (doc.get("caption_hu", "").strip().lower(), doc.get("caption_ro", "").strip().lower())
+
+
+@router.post("/gallery/{photo_id}/cover", response_model=GalleryPhoto)
+async def set_album_cover(photo_id: str, user: dict = Depends(require("gallery"))):
+    doc = await db.gallery_photos.find_one({"id": photo_id, "is_deleted": False})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Photo not found")
+    key = _album_key(doc)
+    siblings = await db.gallery_photos.find({"is_cover": True, "is_deleted": False}, {"id": 1, "caption_hu": 1, "caption_ro": 1}).to_list(5000)
+    ids = [d["id"] for d in siblings if _album_key(d) == key and d["id"] != photo_id]
+    if ids:
+        await db.gallery_photos.update_many({"id": {"$in": ids}}, {"$set": {"is_cover": False}})
+    await db.gallery_photos.update_one({"id": photo_id}, {"$set": {"is_cover": True}})
+    return photo_out({**doc, "is_cover": True})
 
 
 @router.delete("/gallery/{photo_id}", status_code=204)

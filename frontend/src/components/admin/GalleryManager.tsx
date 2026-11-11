@@ -1,18 +1,19 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ImagePlus, Trash2 } from "lucide-react";
+import { Check, ImagePlus, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLang } from "@/lib/i18n";
-import { apiDelete, apiGet, apiPatch, apiUpload } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiPost, apiUpload } from "@/lib/api";
 import type { GalleryPhoto } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InstitutionSelect } from "@/components/admin/InstitutionSelect";
+import { cn } from "@/lib/utils";
 
 const MAX = 100;
 
-function PhotoCard({ p, onChange, onDelete }: { p: GalleryPhoto; onChange: (body: Partial<GalleryPhoto>) => void; onDelete: () => void }) {
+function PhotoCard({ p, onChange, onDelete, onCover }: { p: GalleryPhoto; onChange: (body: Partial<GalleryPhoto>) => void; onDelete: () => void; onCover: () => void }) {
   const { t } = useLang();
   const [hu, setHu] = useState(p.caption_hu);
   const [ro, setRo] = useState(p.caption_ro);
@@ -28,6 +29,21 @@ function PhotoCard({ p, onChange, onDelete }: { p: GalleryPhoto; onChange: (body
         className="absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/90 text-destructive opacity-0 shadow transition-opacity duration-200 group-hover:opacity-100"
       >
         <Trash2 className="h-4 w-4" />
+      </button>
+      <button
+        onClick={onCover}
+        disabled={p.is_cover}
+        data-testid={`gallery-set-cover-${p.id}`}
+        data-cover={p.is_cover}
+        aria-label={p.is_cover ? t.admin.isCover : t.admin.setCover}
+        title={p.is_cover ? t.admin.isCover : t.admin.setCover}
+        className={cn(
+          "absolute left-2 top-2 flex h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold shadow transition-[opacity,background-color] duration-200",
+          p.is_cover ? "cursor-default bg-clay text-clay-foreground" : "cursor-pointer bg-white/90 text-stone-600 hover:text-clay sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+        )}
+      >
+        <Star className={cn("h-4 w-4", p.is_cover && "fill-current")} />
+        {p.is_cover && t.admin.isCover}
       </button>
       <div className="space-y-2 p-2">
         <InstitutionSelect
@@ -64,6 +80,12 @@ export function GalleryManager() {
   const remove = useMutation({
     mutationFn: (id: string) => apiDelete(`/gallery/${id}`),
     onSuccess: () => { toast.success(t.admin.photoDeleted); refresh(); },
+  });
+
+  const cover = useMutation({
+    mutationFn: (id: string) => apiPost(`/gallery/${id}/cover`),
+    onSuccess: () => { toast.success(t.admin.coverSaved); refresh(); },
+    onError: () => toast.error(t.contact.errorText),
   });
 
   const update = useMutation({
@@ -133,6 +155,7 @@ export function GalleryManager() {
             p={p}
             onChange={(body) => update.mutate({ id: p.id, body })}
             onDelete={() => remove.mutate(p.id)}
+            onCover={() => cover.mutate(p.id)}
           />
         ))}
       </div>
