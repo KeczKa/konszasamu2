@@ -76,21 +76,6 @@ async def main():
         }
         await db.posts.insert_one(doc)
         created += 1
-    if await db.gallery_photos.count_documents({}) == 0:
-        base_g = datetime.now(timezone.utc)
-        for url in IMAGES[:4]:
-            await db.gallery_photos.insert_one({
-                "id": __import__("uuid").uuid4().hex,
-                "storage_path": None,
-                "external_url": url,
-                "original_filename": "",
-                "content_type": "image/jpeg",
-                "size": 0,
-                "institution": "nagybaconi-iskola",
-                "is_deleted": False,
-                "created_at": base_g,
-            })
-        print("Seeded 4 gallery photos.")
     await ensure_indexes()
     print(f"Seed complete: {created} new articles, {len(ARTICLES)} total defined.")
 

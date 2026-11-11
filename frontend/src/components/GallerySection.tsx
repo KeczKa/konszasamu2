@@ -1,26 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useLang, memberName } from "@/lib/i18n";
+import { useLang, memberName, pick } from "@/lib/i18n";
 import { apiGet } from "@/lib/api";
 import type { GalleryPhoto } from "@/lib/types";
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 
-const FALLBACK: GalleryPhoto[] = [
-  { id: "fallback-1", src: "/images/classroom.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
-  { id: "fallback-2", src: "/images/students.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
-  { id: "fallback-3", src: "/images/village.jpg?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
-  { id: "fallback-4", src: "/images/library?crop=entropy&cs=srgb&fm=jpg&q=85", original_filename: "", institution: "", created_at: "" },
-];
+const pillCls = "rounded-full border border-white/25 bg-white/10 font-medium tracking-wide text-cream backdrop-blur-md";
 
 export function GallerySection({ institution }: { institution?: string }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const { data } = useQuery({ queryKey: ["gallery"], queryFn: () => apiGet<GalleryPhoto[]>("/gallery"), retry: 1 });
   const [chosen, setChosen] = useState("all");
   const filter = institution ?? chosen;
   const hasPhotos = !!data && data.length > 0;
-  const all = hasPhotos || institution ? data ?? [] : FALLBACK;
+  const all = data ?? [];
   const photos = filter === "all" ? all : all.filter((p) => p.institution === filter);
 
   const [active, setActive] = useState<number | null>(null);
@@ -44,6 +39,8 @@ export function GallerySection({ institution }: { institution?: string }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [active, photos.length]);
+
+  if (!institution && !hasPhotos) return null;
 
   return (
     <section data-testid="gallery-section" className={cn("mx-auto max-w-7xl px-5 sm:px-8", institution ? "py-16" : "py-20 sm:py-28")}>
@@ -104,16 +101,22 @@ export function GallerySection({ institution }: { institution?: string }) {
                 alt={p.original_filename || t.life.alts[i % t.life.alts.length]}
                 className="h-64 w-52 object-cover transition-transform duration-500 group-hover:scale-105 sm:h-80 sm:w-64"
               />
+              <span className="absolute inset-0 bg-gradient-to-b from-ink/40 via-transparent to-ink/50" aria-hidden="true" />
+              {pick(lang, p, "caption") && (
+                <span
+                  data-testid={`gallery-photo-caption-${p.id}`}
+                  className={cn(pillCls, "absolute right-3 top-3 line-clamp-2 max-w-[calc(100%-1.5rem)] rounded-2xl px-3.5 py-1.5 text-right text-xs")}
+                >
+                  {pick(lang, p, "caption")}
+                </span>
+              )}
               {p.institution && (
-                <>
-                  <span className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent" aria-hidden="true" />
-                  <span
-                    data-testid={`gallery-photo-institution-${p.id}`}
-                    className="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] truncate rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-medium tracking-wide text-cream backdrop-blur-md"
-                  >
-                    {memberName(t, p.institution)}
-                  </span>
-                </>
+                <span
+                  data-testid={`gallery-photo-institution-${p.id}`}
+                  className={cn(pillCls, "absolute bottom-4 left-4 max-w-[calc(100%-2rem)] truncate px-4 py-2 text-xs")}
+                >
+                  {memberName(t, p.institution)}
+                </span>
               )}
             </button>
           ))}
@@ -154,6 +157,14 @@ export function GallerySection({ institution }: { institution?: string }) {
               onContextMenu={(e) => e.preventDefault()}
               className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
             />
+            {pick(lang, photos[active], "caption") && (
+              <p
+                data-testid="gallery-lightbox-caption"
+                className="absolute right-5 top-5 max-w-[calc(100%-2.5rem)] rounded-2xl border border-white/25 bg-ink/30 px-5 py-2.5 text-right text-sm font-medium tracking-wide text-cream backdrop-blur-md sm:text-base"
+              >
+                {pick(lang, photos[active], "caption")}
+              </p>
+            )}
             {photos[active].institution && (
               <p
                 data-testid="gallery-lightbox-institution"

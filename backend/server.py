@@ -20,6 +20,7 @@ from lib.security import create_access_token, get_current_user, hash_password, p
 from routers.admin_ext import router as admin_ext_router
 from routers.content import router as content_router
 from routers.events import router as events_router
+from routers.links import router as links_router
 from lib.institutions import DEFAULT_INSTITUTION, InstitutionSlug
 from lib.storage import put_object
 
@@ -74,6 +75,7 @@ api_router = APIRouter(prefix="/api")
 api_router.include_router(admin_ext_router)
 api_router.include_router(content_router)
 api_router.include_router(events_router)
+api_router.include_router(links_router)
 
 
 # ---------- Models ----------

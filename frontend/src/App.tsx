@@ -9,6 +9,7 @@ import NewsList from "@/pages/NewsList";
 import MemberInstitution from "@/pages/MemberInstitution";
 import Documents from "@/pages/Documents";
 import Events from "@/pages/Events";
+import UsefulLinks from "@/pages/UsefulLinks";
 import NewsDetail from "@/pages/NewsDetail";
 import Contact from "@/pages/Contact";
 import AdminLogin from "@/pages/AdminLogin";
@@ -48,6 +49,7 @@ function AppRoutes() {
       <Route path="/tagintezmenyek/:slug" element={<MemberInstitution />} />
       <Route path="/kozlemenyek" element={<Documents />} />
       <Route path="/esemenyek" element={<Events />} />
+      <Route path="/hasznos-linkek" element={<UsefulLinks />} />
       <Route path="/noutati" element={<NewsList />} />
       <Route path="/noutati/:id" element={<NewsDetail />} />
       <Route path="/contact" element={<Contact />} />

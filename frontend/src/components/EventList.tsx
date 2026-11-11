@@ -5,7 +5,7 @@ import type { SchoolEvent } from "@/lib/types";
 import { dayMonth, formatEventDate, isPast } from "@/lib/events";
 import { cn } from "@/lib/utils";
 
-function EventPopup({ ev, onClose }: { ev: SchoolEvent; onClose: () => void }) {
+export function EventPopup({ ev, onClose }: { ev: SchoolEvent; onClose: () => void }) {
   const { lang, t } = useLang();
 
   useEffect(() => {

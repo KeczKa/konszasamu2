@@ -63,11 +63,15 @@ class GalleryPhoto(BaseModel):
     src: str
     original_filename: str
     institution: str
+    caption_hu: str
+    caption_ro: str
     created_at: datetime
 
 
-class GalleryInstitutionUpdate(BaseModel):
-    institution: InstitutionSlug
+class GalleryPhotoUpdate(BaseModel):
+    institution: Optional[InstitutionSlug] = None
+    caption_hu: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    caption_ro: Optional[str] = Field(default=None, min_length=1, max_length=100)
 
 
 def user_out(doc: dict) -> UserOut:
@@ -90,6 +94,8 @@ def photo_out(doc: dict) -> GalleryPhoto:
         src=src,
         original_filename=doc.get("original_filename", ""),
         institution=doc.get("institution", DEFAULT_INSTITUTION),
+        caption_hu=doc.get("caption_hu", ""),
+        caption_ro=doc.get("caption_ro", ""),
         created_at=created,
     )
 
@@ -248,6 +254,8 @@ async def list_gallery():
 async def upload_gallery_photo(
     file: UploadFile = File(...),
     institution: InstitutionSlug = Form(...),
+    caption_hu: str = Form(..., min_length=1, max_length=100),
+    caption_ro: str = Form(..., min_length=1, max_length=100),
     user: dict = Depends(require("gallery")),
 ):
     content_type = (file.content_type or "").lower()
@@ -288,6 +296,8 @@ async def upload_gallery_photo(
         "content_type": content_type,
         "size": result.get("size", len(data)),
         "institution": institution,
+        "caption_hu": caption_hu.strip(),
+        "caption_ro": caption_ro.strip(),
         "is_deleted": False,
         "created_at": datetime.now(timezone.utc),
     }
@@ -351,12 +361,15 @@ async def gallery_image(photo_id: str):
 @router.patch("/gallery/{photo_id}", response_model=GalleryPhoto)
 async def update_gallery_photo(
     photo_id: str,
-    body: GalleryInstitutionUpdate,
+    body: GalleryPhotoUpdate,
     user: dict = Depends(require("gallery")),
 ):
+    changes = {k: v.strip() if isinstance(v, str) else v for k, v in body.model_dump(exclude_none=True).items()}
+    if not changes:
+        raise HTTPException(status_code=400, detail="Nothing to update")
     result = await db.gallery_photos.update_one(
         {"id": photo_id, "is_deleted": False},
-        {"$set": {"institution": body.institution}},
+        {"$set": changes},
     )
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Photo not found")

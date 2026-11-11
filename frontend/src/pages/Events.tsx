@@ -7,12 +7,15 @@ import { splitEvents } from "@/lib/events";
 import { HeaderNav } from "@/components/HeaderNav";
 import { FooterEditorial } from "@/components/FooterEditorial";
 import { EventList } from "@/components/EventList";
+import { EventCalendar } from "@/components/EventCalendar";
+import { CalendarDays, List } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 
 export default function Events() {
   const { t } = useLang();
   const [filter, setFilter] = useState("all");
+  const [view, setView] = useState<"list" | "calendar">("list");
   const events = useQuery({ queryKey: ["events"], queryFn: () => apiGet<SchoolEvent[]>("/events"), retry: 1 });
   const visible = (events.data ?? []).filter((e) => filter === "all" || e.institution === filter || e.institution === "all");
   const { upcoming, past } = splitEvents(visible);
@@ -44,11 +47,32 @@ export default function Events() {
           ))}
         </div>
 
+        <div data-testid="events-view-toggle" className="mt-8 inline-flex rounded-full border border-border bg-white p-1">
+          {([["list", List, t.events.viewList], ["calendar", CalendarDays, t.events.viewCalendar]] as const).map(([key, Icon, label]) => (
+            <button
+              key={key}
+              data-testid={`events-view-${key}`}
+              aria-pressed={view === key}
+              onClick={() => setView(key)}
+              className={cn(
+                "flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200",
+                view === key ? "bg-ink text-cream" : "text-stone-600 hover:text-clay"
+              )}
+            >
+              <Icon className="h-4 w-4" /> {label}
+            </button>
+          ))}
+        </div>
+
+        {view === "calendar" && <div className="mt-10"><EventCalendar events={visible} /></div>}
+
+        {view === "list" && <>
         <h2 className="mt-12 font-heading text-2xl font-semibold text-ink">{t.events.upcoming}</h2>
         {events.data && upcoming.length === 0 && <p data-testid="events-empty" className="mt-4 text-sm text-stone-500">{t.events.empty}</p>}
         <div className="mt-6"><EventList events={upcoming} testId="events-upcoming" /></div>
+        </>}
 
-        {past.length > 0 && (
+        {view === "list" && past.length > 0 && (
           <>
             <h2 className="mt-14 font-heading text-2xl font-semibold text-stone-400">{t.events.past}</h2>
             <div className="mt-6"><EventList events={past} testId="events-past" /></div>

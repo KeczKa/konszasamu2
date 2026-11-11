@@ -24,6 +24,7 @@ export function HeaderNav() {
     { to: "/noutati", label: t.nav.news },
     { to: "/esemenyek", label: t.nav.events },
     { to: "/kozlemenyek", label: t.nav.documents },
+    { to: "/hasznos-linkek", label: t.nav.links },
   ];
 
   const langButton = (l: Lang, label: string) => (

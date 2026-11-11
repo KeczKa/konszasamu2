@@ -41,6 +41,8 @@ export interface GalleryPhoto {
   src: string;
   original_filename: string;
   institution: string;
+  caption_hu: string;
+  caption_ro: string;
   created_at: string;
 }
 
@@ -79,4 +81,12 @@ export interface SchoolEvent {
   description_hu: string;
   location: string;
   institution: string;
+}
+
+export interface UsefulLink {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  url: string;
 }

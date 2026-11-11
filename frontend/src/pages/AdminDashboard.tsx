@@ -14,6 +14,7 @@ import { UsersManager } from "@/components/admin/UsersManager";
 import { InstitutionsManager } from "@/components/admin/InstitutionsManager";
 import { DocumentsManager } from "@/components/admin/DocumentsManager";
 import { EventsManager } from "@/components/admin/EventsManager";
+import { LinksManager } from "@/components/admin/LinksManager";
 import { InstitutionSelect } from "@/components/admin/InstitutionSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,6 +113,7 @@ export default function AdminDashboard() {
     { key: "events", label: t.admin.tabEvents },
     { key: "institutions", label: t.admin.tabInstitutions },
     { key: "documents", label: t.admin.tabDocuments },
+    { key: "links", label: t.admin.tabLinks },
     { key: "users", label: t.admin.tabUsers },
   ].filter((d) => perms.has(d.key));
   const activeTab = tabDefs.some((d) => d.key === tab) ? tab : (tabDefs[0]?.key ?? "");
@@ -345,6 +347,8 @@ export default function AdminDashboard() {
         {activeTab === "institutions" && <InstitutionsManager />}
 
         {activeTab === "documents" && <DocumentsManager />}
+
+        {activeTab === "links" && <LinksManager />}
 
         {activeTab === "users" && <UsersManager currentUserId={me.data.id} />}
       </main>
