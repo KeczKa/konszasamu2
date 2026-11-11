@@ -25,5 +25,11 @@ Kapcsolat only in header right; footer reorganised (Tanári portál centre, cont
 - PDF types (Közlemény/Határozat), required on upload, changeable; filter on /kozlemenyek.
 - Events (/esemenyek): date+optional time, HU/RO name & description, location, institution or 'all'; admin+editor manage; click opens popup with grey backdrop; past events grey & inactive; home shows next 3 (replaced stats); member pages show own + 'all' events. Tested (iteration_5/6).
 
+## Iteration 6 (done, Nov 2026)
+- Applied user's text changes from GitHub dev branch (commit 60b1636).
+- Events: list/calendar (monthly grid) toggle on /esemenyek.
+- Gallery: batch upload with required HU/RO caption (max 100), editable per photo; caption pill top-right on tiles & lightbox; gallery cleared, home hides empty gallery, no stock fallback; delete now removes file.
+- Hasznos linkek (/hasznos-linkek): admin-only CRUD of name/address/phone/website; starts empty. Tested (iteration_7).
+
 ## Backlog
 - P2: Document search; event calendar export (iCal)

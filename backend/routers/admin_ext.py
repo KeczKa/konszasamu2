@@ -14,7 +14,7 @@ from pydantic import BaseModel, EmailStr, Field
 from lib.db import db
 from lib.institutions import DEFAULT_INSTITUTION, InstitutionSlug
 from lib.security import get_current_user, permissions_for, require
-from lib.storage import STORAGE_DIR, get_object, put_object
+from lib.storage import STORAGE_DIR, get_object, put_object, delete_object
 
 router = APIRouter()
 
@@ -258,6 +258,9 @@ async def upload_gallery_photo(
     caption_ro: str = Form(..., min_length=1, max_length=100),
     user: dict = Depends(require("gallery")),
 ):
+    caption_hu, caption_ro = caption_hu.strip(), caption_ro.strip()
+    if not caption_hu or not caption_ro:
+        raise HTTPException(status_code=422, detail="A leírás kötelező. / Descrierea este obligatorie.")
     content_type = (file.content_type or "").lower()
     if content_type not in ALLOWED_IMAGE_TYPES:
         raise HTTPException(
@@ -296,8 +299,8 @@ async def upload_gallery_photo(
         "content_type": content_type,
         "size": result.get("size", len(data)),
         "institution": institution,
-        "caption_hu": caption_hu.strip(),
-        "caption_ro": caption_ro.strip(),
+        "caption_hu": caption_hu,
+        "caption_ro": caption_ro,
         "is_deleted": False,
         "created_at": datetime.now(timezone.utc),
     }
@@ -367,6 +370,8 @@ async def update_gallery_photo(
     changes = {k: v.strip() if isinstance(v, str) else v for k, v in body.model_dump(exclude_none=True).items()}
     if not changes:
         raise HTTPException(status_code=400, detail="Nothing to update")
+    if any(k.startswith("caption_") and not v for k, v in changes.items()):
+        raise HTTPException(status_code=422, detail="A leírás kötelező. / Descrierea este obligatorie.")
     result = await db.gallery_photos.update_one(
         {"id": photo_id, "is_deleted": False},
         {"$set": changes},
@@ -381,9 +386,8 @@ async def delete_gallery_photo(
     photo_id: str,
     user: dict = Depends(require("gallery")),
 ):
-    result = await db.gallery_photos.update_one(
-        {"id": photo_id},
-        {"$set": {"is_deleted": True}},
-    )
-    if result.matched_count == 0:
+    doc = await db.gallery_photos.find_one_and_delete({"id": photo_id})
+    if not doc:
         raise HTTPException(status_code=404, detail="Photo not found")
+    if doc.get("storage_path"):
+        await asyncio.to_thread(delete_object, doc["storage_path"])

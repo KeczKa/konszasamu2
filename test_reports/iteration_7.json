@@ -1,0 +1,37 @@
+{
+  "summary": "Tested backend and frontend for iteration 7: calendar view, gallery batch upload with bilingual captions, Hasznos linkek page and admin tab, empty gallery, and the 7-item header. Backend: 40/41 pytest checks passed. The one failure is minor: a caption made only of spaces is accepted and saved as an empty string. Frontend: every requested flow passed (about 70 Playwright checks). Calendar: shows 2026 November, prev/next/today work, chips sit on the right days, upcoming chips open the popup, past chips are disabled, the institution filter applies, the RO month label works, and at 390px cells show dots with calendar-month-list / calendar-month-empty below and no horizontal overflow. Gallery: the upload button stays disabled until institution and both captions are filled (whitespace counts as empty, maxLength is 100). Uploading 3 files at once gave all 3 the same caption. Per-photo caption save and the per-photo institution select both persisted. Home: the gallery section is hidden when there are no photos. Tiles show the caption top-right and the institution bottom-left without hover; the lightbox shows both and the caption does not overlap the close button; RO switch shows RO captions; member pages show their photos or gallery-empty. Links: nav item shows at 1280 (no overflow) and in the mobile menu; links-empty and admin-no-links show; the name required check and the http(s) URL pattern block bad input; create, edit and delete work; the card shows name/address/phone and the website link opens in a new tab (_blank); the RO label is 'Linkuri utile'. Cleanup: everything I created was removed (photos hard-deleted by id with their files, link deleted, temporary editor user removed). Gallery and links are back to 0 and the 4 seeded events are untouched.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/gallery, PATCH /api/gallery/{id}", "issue": "A caption of only spaces ('   ') passes min_length=1 and is then stripped and saved as '' (POST returns 201 with caption_hu ''). The 'caption required' rule can be bypassed through the API. Fix: strip before validating (a Pydantic constr/validator, or Form + an explicit check that returns 422)."},
+      {"endpoint": "POST/PUT /api/links", "issue": "Values are not stripped, so a name of only spaces is accepted (the frontend 'required' check also allows spaces)."},
+      {"endpoint": "DELETE /api/gallery/{id}", "issue": "Soft delete only: the image file stays in /app/uploads and the Mongo document stays with is_deleted=true. Orphaned files pile up."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Admin gallery batch upload", "issue": "No success toast after a batch upload. If one file fails partway, the loop stops and the remaining files are skipped silently; only a generic error is shown and it does not say how many were uploaded.", "affected_selectors": ["[data-testid=gallery-upload-input]"]}
+    ],
+    "design_issues": [
+      {"screen": "Short pages (/hasznos-linkek when empty, at 1920x1080)", "issues": ["The footer is not pinned to the bottom, so a cream strip shows below it when the content is shorter than the viewport. Pre-existing layout pattern."]},
+      {"screen": "Admin gallery photo card", "issues": ["The delete button is opacity-0 until hover, so touch devices cannot discover it (pre-existing)."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_gallery_captions_links.py", "/app/backend/tests/test_institutions_documents.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Reject whitespace-only caption_hu/caption_ro in POST /api/gallery and PATCH /api/gallery/{id} with 422 (strip before validating).",
+    "Optional: strip and validate the name in LinkIn; show a success toast and a per-file result for gallery batch uploads; delete the file on gallery delete."
+  ],
+  "critical_code_review_comments": [
+    "EventCalendar uses the browser's new Date() for 'today' and the initial month, while isPast is also client-side. This is fine, but the result depends on the user's clock.",
+    "The calendar grid shows adjacent-month days with their events (e.g. Mikulás Dec 5 appears in the November view). This is intended behaviour and not a bug.",
+    "LinksManager update returns UsefulLink built from the body, which is fine. GET /links projects only the model fields, and there is no _id leak (verified)."
+  ],
+  "updated_files": ["/app/backend/tests/test_gallery_captions_links.py (new)", "/app/backend/tests/test_institutions_documents.py (gallery uploads now send caption_hu/caption_ro; hard-removes its own test photo by id)"],
+  "success_rate": {"backend": "97.5% (40/41)", "frontend": "100%"},
+  "seed_data_creation": "none. All test photos, links and the temporary editor user were removed by id.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Server date is 2026-11-11. Event IDs: Szülői 798ec223 (11-15), Mikulás e053c87a (12-05), Karácsonyi bece7097 (12-18), Tanévnyitó a8c6f703 (09-15, past). Gallery delete is a soft delete, so tests hard-delete their own records from Mongo by id. Admin gallery delete button needs hover or force=True. Mobile menu link testid: mobile-nav-hasznos-linkek."
+}

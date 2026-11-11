@@ -153,12 +153,13 @@ class TestDocuments:
 # --- Gallery institution
 class TestGallery:
     def test_upload_without_institution_422(self, admin):
-        r = admin.post(f"{BASE}/gallery", files={"file": ("a.png", PNG, "image/png")})
+        r = admin.post(f"{BASE}/gallery", files={"file": ("a.png", PNG, "image/png")},
+                       data={"caption_hu": "TEST_hu", "caption_ro": "TEST_ro"})
         assert r.status_code == 422
 
     def test_upload_patch_delete(self, admin):
         r = admin.post(f"{BASE}/gallery", files={"file": ("TEST.png", PNG, "image/png")},
-                       data={"institution": "ajtai-iskola"})
+                       data={"institution": "ajtai-iskola", "caption_hu": "TEST_hu", "caption_ro": "TEST_ro"})
         assert r.status_code == 201
         pid = r.json()["id"]
         assert r.json()["institution"] == "ajtai-iskola"
@@ -171,3 +172,4 @@ class TestGallery:
             assert requests.patch(f"{BASE}/gallery/{pid}", json={"institution": "ajtai-iskola"}).status_code == 401
         finally:
             assert admin.delete(f"{BASE}/gallery/{pid}").status_code == 204
+            MongoClient("mongodb://localhost:27017")["konszasamu_preview"].gallery_photos.delete_one({"id": pid})

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from lib.db import db
 from lib.security import require
@@ -17,6 +17,11 @@ class LinkIn(BaseModel):
     address: str = Field(default="", max_length=300)
     phone: str = Field(default="", max_length=60)
     url: str = Field(default="", max_length=500, pattern=r"^(https?://\S+)?$")
+
+    @field_validator("name", "address", "phone", "url", mode="before")
+    @classmethod
+    def strip(cls, v: str) -> str:
+        return v.strip() if isinstance(v, str) else v
 
 
 class UsefulLink(LinkIn):
