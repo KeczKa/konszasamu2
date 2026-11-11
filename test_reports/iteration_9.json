@@ -1,0 +1,32 @@
+{
+  "summary": "Album cover choice tested (backend pytest + Playwright desktop 1920 & mobile 390). Set cover works: toast 'Album borítókép beállítva.', data-cover=true only on the chosen photo, 'Album borítókép' label shown, home card gallery-album-karacsony-2026 img src = chosen photo, Farsang album unaffected (falls back to its first photo), switching cover inside the album clears the old one (one cover per album, case-insensitive/trimmed grouping checked), lightbox opens on the cover (counter 3 / 3, image = cover). Unauthenticated -> 401, unknown id -> 404, GET /api/gallery returns is_cover. Star is hidden until hover on desktop and always visible at 390px (36x36). FAILED: editing the cover photo's caption does NOT reset is_cover (still true via API and data-cover=true in the UI). All 5 UI photos and all pytest photos were deleted; gallery is empty ([]).",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "PATCH /api/gallery/{id}", "issue": "Changing caption_hu/caption_ro does not set is_cover=false. update_gallery_photo only $sets the changed fields. The moved photo stays is_cover=true and becomes the cover of its new album without anyone choosing it. If the target album already has a cover, it ends up with two covers.", "priority": "HIGH"}
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Caption edit of cover photo", "issue": "After saving the new caption, gallery-set-cover-<id> still has data-cover=true and shows the 'Album borítókép' label (caused by the backend bug)", "affected_selectors": ["gallery-photo-caption-save-<id>", "gallery-set-cover-<id>"]}
+    ],
+    "design_issues": [
+      {"screen": "Lightbox with very small images (40x50 test PNGs)", "issues": ["Counter, caption and institution pills get squeezed into narrow vertical stacks over the small image. Low priority; real photos are larger, but consider giving the image container a min-width."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_gallery_album_cover.py", "/app/test_reports/pytest/pytest_iter9.xml"],
+  "action_items": [
+    "In update_gallery_photo (backend/routers/admin_ext.py): if caption_hu or caption_ro is in changes and the album key changes (or always on caption change, as the spec says), add is_cover: False to the $set"
+  ],
+  "critical_code_review_comments": [
+    "set_album_cover loads every is_cover photo (to_list(5000)) and filters in Python. That is fine at this scale; a case-insensitive regex or a stored normalized album_key field would scale better.",
+    "set_album_cover is not atomic: two concurrent requests could leave two covers. Low risk for an admin-only action."
+  ],
+  "updated_files": ["/app/backend/tests/test_gallery_album_cover.py"],
+  "success_rate": {"backend": "80% (4/5)", "frontend": "~90% (all cover flows pass except caption-edit reset)"},
+  "seed_data_creation": "None kept. All created photos were deleted and GET /api/gallery returns [].",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run pytest tests/test_gallery_album_cover.py (it cleans up after itself). The failing test is test_caption_edit_resets_cover. Admin tab: admin-tab-gallery. The upload institution select is a native <select> (use select_option)."
+}

@@ -374,6 +374,8 @@ async def update_gallery_photo(
         raise HTTPException(status_code=400, detail="Nothing to update")
     if any(k.startswith("caption_") and not v for k, v in changes.items()):
         raise HTTPException(status_code=422, detail="A leírás kötelező. / Descrierea este obligatorie.")
+    if any(k.startswith("caption_") for k in changes):
+        changes["is_cover"] = False
     result = await db.gallery_photos.update_one(
         {"id": photo_id, "is_deleted": False},
         {"$set": changes},

@@ -128,7 +128,7 @@ function Lightbox({ photos, start, onClose }: { photos: GalleryPhoto[]; start: n
           alt={pick(lang, photo, "caption") || photo.original_filename}
           data-testid="gallery-lightbox-image"
           onContextMenu={(e) => e.preventDefault()}
-          className="max-h-[75vh] max-w-[90vw] rounded-2xl object-contain shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+          className="max-h-[75vh] min-w-[min(85vw,22rem)] max-w-[90vw] rounded-2xl object-contain shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
         />
         {pick(lang, photo, "caption") && (
           <p

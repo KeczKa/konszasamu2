@@ -35,5 +35,8 @@ Kapcsolat only in header right; footer reorganised (Tanári portál centre, cont
 - /kozlemenyek: title search (HU/RO, accent-insensitive) + year filter, combined with type filter.
 - Gallery albums: photos grouped by caption pair; album cards (count, caption, institution); lightbox with counter + thumbnails. Tested (iteration_8).
 
+## Iteration 8 (done)
+- Album cover choice: star button per photo in admin (POST /api/gallery/{id}/cover), one cover per album, caption edit resets cover; public card + lightbox start use cover. Tested (iteration_9 + manual recheck).
+
 ## Backlog
-- P2: Event calendar export (iCal); album cover choice
+- P2: Event calendar export (iCal)
